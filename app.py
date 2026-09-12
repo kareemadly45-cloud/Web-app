@@ -401,3 +401,30 @@ st.markdown(
     '<div class="footer">© 2026 La Mariposa STORE — ALL RIGHTS RESERVED</div>',
     unsafe_allow_html=True
 )
+st.markdown("""
+<style>
+    /* إخفاء الـ Header بالكامل */
+    header[data-testid="stHeader"] { display: none !important; }
+    
+    /* إخفاء الـ Toolbar */
+    [data-testid="stToolbar"] { display: none !important; }
+    
+    /* إخفاء زر Deploy */
+    .stDeployButton { display: none !important; }
+    
+    /* إخفاء القايمة الرئيسية */
+    #MainMenu { visibility: hidden !important; }
+    
+    /* إخفاء الـ Footer */
+    footer { visibility: hidden !important; }
+    
+    /* إخفاء الـ Decoration (الشريط الملون فوق) */
+    [data-testid="stDecoration"] { display: none !important; }
+    
+    /* إخفاء Manage app button */
+    [data-testid="manage-app-button"] { display: none !important; }
+    
+    /* إخفاء Share button */
+    [data-testid="stAppDeployButton"] { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
