@@ -1,4 +1,5 @@
 import json
+import base64
 import streamlit as st
 from pathlib import Path
 
@@ -7,54 +8,42 @@ from pathlib import Path
 # ============================================
 DATA_DIR = Path("data")
 DATA_FILE = DATA_DIR / "products.json"
-ASSETS_DIR = Path("assets")
+UPLOADS_DIR = Path("uploads")
 
-# ============================================
-# 📱 WhatsApp Settings
-# ============================================
-WHATSAPP_NUMBER = "201012345678"   # ← رقمك هنا (بدون + وبدون مسافات)
-WHATSAPP_MESSAGE = "مرحبا، عايز أستفسر عن منتجات La Mariposa Store"
-
-# ============================================
-# 🔐 Admin Password
-# ============================================
-try:
-    ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
-except Exception:
-    ADMIN_PASSWORD = "admin123"
 # ============================================
 # Categories
 # ============================================
 CATEGORIES = {
-    "home": {
-        "name": "Home",
-        "icon": "🏠",
-        "page": "1_Home",
-        "color": "#FF6B6B",
-        "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop",
-    },
-    "luxury": {
-        "name": "Luxury",
-        "icon": "💎",
-        "page": "2_Luxury",
-        "color": "#9B59B6",
-        "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300&h=300&fit=crop",
-    },
-    "soree": {
-        "name": "Soree",
-        "icon": "🛍️",
-        "page": "3_Soree",
-        "color": "#3498DB",
-        "image": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=300&h=300&fit=crop",
-    },
-    "discount": {
-        "name": "Discount",
-        "icon": "🔥",
-        "page": "4_Discount",
-        "color": "#E74C3C",
-        "image": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=300&h=300&fit=crop",
-    },
+    "home":     {"name": "Home",     "icon": "🏠", "page": "1_Home"},
+    "luxury":   {"name": "Luxury",   "icon": "💎", "page": "2_Luxury"},
+    "soree":    {"name": "Soree",    "icon": "🛍️", "page": "3_Soree"},
+    "discount": {"name": "Discount", "icon": "🔥", "page": "4_Discount"},
 }
+
+
+# ============================================
+# Admin
+# ============================================
+def get_admin_password():
+    try:
+        return st.secrets["ADMIN_PASSWORD"]
+    except (KeyError, FileNotFoundError):
+        return "admin123"
+
+
+def is_admin():
+    return st.session_state.get("is_admin", False)
+
+
+def login_admin(password):
+    if password == get_admin_password():
+        st.session_state.is_admin = True
+        return True
+    return False
+
+
+def logout_admin():
+    st.session_state.is_admin = False
 
 
 # ============================================
@@ -62,7 +51,6 @@ CATEGORIES = {
 # ============================================
 def init_db():
     DATA_DIR.mkdir(exist_ok=True)
-    ASSETS_DIR.mkdir(exist_ok=True)
     if not DATA_FILE.exists():
         default_data = {cat: [] for cat in CATEGORIES.keys()}
         with open(DATA_FILE, "w", encoding="utf-8") as f:
@@ -106,119 +94,67 @@ def delete_product(category, product_id):
 
 
 # ============================================
-# 📸 Image Upload
+# Image Handling
 # ============================================
-def save_uploaded_image(uploaded_file, product_id=None):
-    """يحفظ الصورة المرفوعة في assets/ ويرجع المسار"""
+def save_uploaded_image(uploaded_file, product_id):
+    """حفظ الصورة المرفوعة في مجلد uploads"""
     if uploaded_file is None:
         return ""
-
-    ASSETS_DIR.mkdir(exist_ok=True)
-
-    original_name = uploaded_file.name
-    ext = original_name.split(".")[-1].lower() if "." in original_name else "png"
-
-    # لو مفيش product_id، نستخدم UUID
-    if product_id is None:
-        import uuid
-        product_id = str(uuid.uuid4())
-
-    filename = f"{product_id}.{ext}"
-    filepath = ASSETS_DIR / filename
-
+    UPLOADS_DIR.mkdir(exist_ok=True)
+    ext = uploaded_file.name.split(".")[-1].lower()
+    import uuid
+    filename = f"{product_id}_{uuid.uuid4().hex[:8]}.{ext}"
+    filepath = UPLOADS_DIR / filename
     with open(filepath, "wb") as f:
         f.write(uploaded_file.getbuffer())
-
-    return str(filepath).replace("\\", "/")
-
-# ============================================
-# 🛒 Cart Functions  ✅ (المهمة)
-# ============================================
-def init_cart():
-    if "cart" not in st.session_state:
-        st.session_state.cart = []
+    return str(filepath)
 
 
-def add_to_cart(product, category):
-    """إضافة منتج للسلة"""
-    init_cart()
-    st.session_state.cart.append({**product, "category": category})
-
-
-def remove_from_cart(index):
-    """حذف منتج من السلة بالترتيب"""
-    init_cart()
-    if 0 <= index < len(st.session_state.cart):
-        st.session_state.cart.pop(index)
-
-
-def get_cart_count():
-    """عدد المنتجات في السلة"""
-    init_cart()
-    return len(st.session_state.cart)
-
-
-def get_cart_items():
-    """كل المنتجات في السلة"""
-    init_cart()
-    return st.session_state.cart
-
-
-def get_cart_total():
-    """إجمالي سعر السلة"""
-    init_cart()
-    total = 0
-    for item in st.session_state.cart:
-        price = item.get("price_after") or item.get("price", 0)
-        total += price
-    return total
-
-
-def clear_cart():
-    """تفريغ السلة"""
-    st.session_state.cart = []
+def image_to_base64(path):
+    """تحويل الصورة لـ Base64 عشان تظهر في HTML"""
+    try:
+        with open(path, "rb") as f:
+            data = f.read()
+        ext = path.split(".")[-1].lower()
+        if ext == "jpg":
+            ext = "jpeg"
+        return f"data:image/{ext};base64,{base64.b64encode(data).decode()}"
+    except Exception:
+        return ""
 
 
 # ============================================
-# Admin Session
+# CSS Helpers
 # ============================================
-def is_admin():
-    return st.session_state.get("is_admin", False)
-
-
-def login_admin(password):
-    if password == ADMIN_PASSWORD:
-        st.session_state.is_admin = True
-        return True
-    return False
-
-
-def logout_admin():
-    st.session_state.is_admin = False
+def hide_streamlit_ui():
+    """إخفاء عناصر Streamlit الافتراضية"""
+    st.markdown("""
+<style>
+    header[data-testid="stHeader"] { display: none !important; }
+    [data-testid="stToolbar"] { display: none !important; }
+    [data-testid="stToolbarActions"] { display: none !important; }
+    .stDeployButton { display: none !important; }
+    .stAppDeployButton { display: none !important; }
+    [data-testid="stAppDeployButton"] { display: none !important; }
+    [data-testid="stStatusWidget"] { display: none !important; }
+    #MainMenu { visibility: hidden !important; }
+    footer { visibility: hidden !important; }
+    [data-testid="stDecoration"] { display: none !important; }
+    [data-testid="manage-app-button"] { display: none !important; }
+    .viewerBadge_container__1QSob { display: none !important; }
+    .viewerBadge_link__1S137 { display: none !important; }
+    .viewerBadge_text__1JaDK { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
 
 
 # ============================================
-# Helpers
+# Product Card
 # ============================================
 def calc_discount(price_before, price_after):
     if price_before and price_after and price_before > price_after:
         return int(((price_before - price_after) / price_before) * 100)
     return 0
-
-
-def get_whatsapp_link(product=None):
-    msg = WHATSAPP_MESSAGE
-    if product:
-        msg = f"مرحبا، عايز أستفسر عن: {product['name']}"
-        price = product.get("price", 0)
-        price_after = product.get("price_after", 0)
-        if price_after and price_after < price:
-            msg += f" (السعر: {price_after:.0f} EGP بدل {price:.0f} EGP)"
-        else:
-            msg += f" (السعر: {price:.0f} EGP)"
-
-    msg_encoded = msg.replace(" ", "%20").replace("\n", "%0A")
-    return f"https://wa.me/{WHATSAPP_NUMBER}?text={msg_encoded}"
 
 
 def render_product_card(product):
@@ -227,28 +163,54 @@ def render_product_card(product):
     has_discount = price_after and price_after < price
     discount = calc_discount(price, price_after) if has_discount else 0
 
-    if product.get("image"):
-        img_html = f'<img src="{product["image"]}" style="width:100%; height:240px; object-fit:cover; border-radius:12px;">'
+    images = product.get("images", [])
+    if not images and product.get("image"):
+        images = [product["image"]]
+
+    img_src = ""
+    if images:
+        first = images[0]
+        img_src = first if first.startswith("http") else image_to_base64(first)
+
+    if img_src:
+        img_html = f'<img src="{img_src}" style="width:100%;height:220px;object-fit:cover;border-radius:10px;">'
     else:
-        img_html = '<div style="width:100%; height:240px; background:#2a2a2a; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#666;">No Image</div>'
+        img_html = '<div style="width:100%;height:220px;background:#2a2a2a;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#999;">No Image</div>'
 
     badge = ""
     if has_discount:
-        badge = f'<span style="background:linear-gradient(135deg,#800020,#B22234); color:white; padding:5px 14px; border-radius:20px; font-size:13px; font-weight:bold;">-{discount}%</span>'
+        badge = f'<span style="background:#e74c3c;color:white;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:bold;">-{discount}%</span>'
 
     if has_discount:
-        price_html = f'<span style="text-decoration:line-through; color:#666; font-size:15px;">{price:.0f} EGP</span> <span style="color:#800020; font-weight:bold; font-size:22px; margin-left:8px;">{price_after:.0f} EGP</span>'
+        price_html = f'<span style="text-decoration:line-through;color:#999;font-size:14px;">{price:.0f} EGP</span> <span style="color:#e74c3c;font-weight:bold;font-size:18px;">{price_after:.0f} EGP</span>'
     else:
-        price_html = f'<span style="color:#F39C12; font-weight:bold; font-size:22px;">{price:.0f} EGP</span>'
+        price_html = f'<span style="font-weight:bold;font-size:18px;">{price:.0f} EGP</span>'
 
-    st.markdown(f"""
-    <div style="border:2px solid #800020; border-radius:15px; padding:14px; background:#1a1a1a; margin-bottom:10px; box-shadow:0 4px 15px rgba(128,0,32,0.3);">
-        {img_html}
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-            <div style="font-weight:700; font-size:17px; color:#ffffff;">{product['name']}</div>
-            {badge}
-        </div>
-        <div style="margin-top:10px;">{price_html}</div>
-        <div style="color:#999; font-size:14px; margin-top:6px;">{product.get('description', '')}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    html = (
+        f'<div style="border:1px solid #333;border-radius:12px;padding:12px;background:#1a1a1a;">'
+        f'{img_html}'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">'
+        f'<div style="font-weight:600;font-size:16px;">{product["name"]}</div>'
+        f'{badge}'
+        f'</div>'
+        f'<div style="margin-top:8px;">{price_html}</div>'
+        f'<div style="color:#999;font-size:13px;margin-top:5px;">{product.get("description","")}</div>'
+        f'</div>'
+    )
+    st.markdown(html, unsafe_allow_html=True)
+
+
+# ============================================
+# WhatsApp
+# ============================================
+def whatsapp_link(product_name=""):
+    import urllib.parse
+    try:
+        number = st.secrets["WHATSAPP_NUMBER"]
+        msg = st.secrets["WHATSAPP_MESSAGE"]
+    except (KeyError, FileNotFoundError):
+        number = "201012345678"
+        msg = "مرحبا، عايز أستفسر عن منتجات La Mariposa"
+    if product_name:
+        msg = f"{msg}\n\nالمنتج: {product_name}"
+    return f"https://wa.me/{number}?text={urllib.parse.quote(msg)}"
