@@ -220,3 +220,25 @@ def render_product_card(product):
         <div style="color:#999;font-size:14px;margin-top:6px;">{product.get('description', '')}</div>
     </div>
     """, unsafe_allow_html=True)
+
+
+
+# ============================================
+# إخفاء عناصر Streamlit
+# ============================================
+def hide_streamlit_ui():
+    """إخفاء عناصر Streamlit الافتراضية (Fork, GitHub, Toolbar)"""
+    st.markdown("""
+<style>
+    header[data-testid="stHeader"] { display: none !important; }
+    [data-testid="stToolbar"] { display: none !important; }
+    [data-testid="stToolbarActions"] { display: none !important; }
+    .stDeployButton { display: none !important; }
+    [data-testid="stAppDeployButton"] { display: none !important; }
+    [data-testid="stStatusWidget"] { display: none !important; }
+    #MainMenu { visibility: hidden !important; }
+    footer { visibility: hidden !important; }
+    [data-testid="stDecoration"] { display: none !important; }
+    [data-testid="manage-app-button"] { display: none !important; }
+</style>
+""", unsafe_allow_html=True)
