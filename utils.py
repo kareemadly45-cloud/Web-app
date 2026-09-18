@@ -2,6 +2,15 @@ import uuid
 import streamlit as st
 from pathlib import Path
 
+try:
+    from supabase import create_client, Client
+    SUPABASE_AVAILABLE = True
+except ImportError as e:
+    create_client = None
+    Client = None
+    SUPABASE_AVAILABLE = False
+    SUPABASE_IMPORT_ERROR = str(e)
+
 # ============================================
 # Paths
 # ============================================
@@ -28,7 +37,10 @@ except Exception:
 # 🗄️ Supabase Client
 # ============================================
 @st.cache_resource
-def get_supabase() -> Client:
+def get_supabase():
+    if not SUPABASE_AVAILABLE:
+        st.error(f"⚠️ Supabase library not installed: {SUPABASE_IMPORT_ERROR}")
+        st.stop()
     url = st.secrets["SUPABASE_URL"]
     key = st.secrets["SUPABASE_KEY"]
     return create_client(url, key)
