@@ -38,13 +38,9 @@ except Exception:
 # ============================================
 @st.cache_resource
 def get_supabase():
-    # تكوين الرابط بحروف إنجليزية 100% (نتجنب الحروف الروسية)
-    # Supabase project ref: scpaqujqzckxuuyibsz
-    project_ref = "scpaqujqzckxuuyibsz"  # ← هنا بنكتب الحروف بانجليزي عادي
-    url = f"https://{project_ref}e.supabase.co"
+    url = st.secrets["SUPABASE_URL"]
     key = st.secrets["SUPABASE_KEY"]
     return create_client(url, key)
-
 # ============================================
 # Categories
 # ============================================
