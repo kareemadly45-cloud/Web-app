@@ -1,45 +1,38 @@
+import json
 import uuid
 import streamlit as st
 from pathlib import Path
-
-try:
-    from supabase import create_client, Client
-    SUPABASE_AVAILABLE = True
-except ImportError as e:
-    create_client = None
-    Client = None
-    SUPABASE_AVAILABLE = False
-    SUPABASE_IMPORT_ERROR = str(e)
+from supabase import create_client, Client
 
 # ============================================
 # Paths
 # ============================================
 DATA_DIR = Path("data")
+DATA_FILE = DATA_DIR / "products.json"
 ASSETS_DIR = Path("assets")
-BUCKET_NAME = "product-images"
 
 # ============================================
-# 📱 WhatsApp Settings
+# 📱 WhatsApp
 # ============================================
 WHATSAPP_NUMBER = "201012345678"
 WHATSAPP_MESSAGE = "مرحبا، عايز أستفسر عن منتجات La Mariposa Store"
 
 # ============================================
-# 🔐 Admin Password
+# 🔐 Admin
 # ============================================
 try:
     ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
 except Exception:
     ADMIN_PASSWORD = "admin123"
 
+# ============================================
+# 🗄️ Supabase
+# ============================================
+BUCKET_NAME = "product-images"
 
-# ============================================
-# 🗄️ Supabase Client
-# ============================================
 @st.cache_resource
 def get_supabase():
-    # بناء الرابط بحروف لاتينية مضمونة 100%
-    # 101 في ASCII = الحرف 'e' (Latin) — مستحيل يكون روسي
+    # بناء الرابط بحروف لاتينية مضمونة
     project_ref = "scpaqujqzckxuuyibsz" + chr(101)
     url = "https://" + project_ref + ".supabase.co"
     key = st.secrets["SUPABASE_KEY"]
@@ -50,35 +43,45 @@ def get_supabase():
 # ============================================
 CATEGORIES = {
     "home": {
-        "name": "Home", "icon": "🏠", "page": "1_Home", "color": "#FF6B6B",
+        "name": "Home",
+        "icon": "🏠",
+        "page": "1_Home",
+        "color": "#FF6B6B",
         "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop",
     },
     "luxury": {
-        "name": "Luxury", "icon": "💎", "page": "2_Luxury", "color": "#9B59B6",
+        "name": "Luxury",
+        "icon": "💎",
+        "page": "2_Luxury",
+        "color": "#9B59B6",
         "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300&h=300&fit=crop",
     },
     "soree": {
-        "name": "Soree", "icon": "🛍️", "page": "3_Soree", "color": "#3498DB",
+        "name": "Soree",
+        "icon": "🛍️",
+        "page": "3_Soree",
+        "color": "#3498DB",
         "image": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=300&h=300&fit=crop",
     },
     "discount": {
-        "name": "Discount", "icon": "🔥", "page": "4_Discount", "color": "#E74C3C",
+        "name": "Discount",
+        "icon": "🔥",
+        "page": "4_Discount",
+        "color": "#E74C3C",
         "image": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=300&h=300&fit=crop",
     },
 }
 
 
 # ============================================
-# Database (Supabase)
+# Database
 # ============================================
 def init_db():
-    """مش محتاجة مع Supabase"""
     DATA_DIR.mkdir(exist_ok=True)
     ASSETS_DIR.mkdir(exist_ok=True)
 
 
 def get_products(category):
-    """جلب منتجات كاتيجوري من Supabase"""
     try:
         supabase = get_supabase()
         response = (
@@ -99,7 +102,6 @@ def get_products(category):
 
 
 def add_product(category, product):
-    """إضافة منتج في Supabase"""
     try:
         supabase = get_supabase()
         data = {
@@ -118,7 +120,6 @@ def add_product(category, product):
 
 
 def update_product(category, product_id, updated):
-    """تعديل منتج"""
     try:
         supabase = get_supabase()
         data = {
@@ -136,11 +137,8 @@ def update_product(category, product_id, updated):
 
 
 def delete_product(category, product_id):
-    """حذف منتج + صوره من Storage"""
     try:
         supabase = get_supabase()
-
-        # امسح الصور من Storage
         product = supabase.table("products").select("images").eq("id", product_id).execute()
         if product.data:
             images = product.data[0].get("images", [])
@@ -150,8 +148,6 @@ def delete_product(category, product_id):
                     supabase.storage.from_(BUCKET_NAME).remove([filename])
                 except Exception:
                     pass
-
-        # امسح المنتج
         supabase.table("products").delete().eq("id", product_id).execute()
         return True
     except Exception as e:
@@ -160,37 +156,71 @@ def delete_product(category, product_id):
 
 
 # ============================================
-# 📸 Image Upload (Supabase Storage)
+# 📸 Image Upload
 # ============================================
 def save_uploaded_image(uploaded_file, product_id=None):
-    """حفظ الصورة في Supabase Storage وإرجاع الرابط"""
     if uploaded_file is None:
         return ""
-
     try:
         supabase = get_supabase()
-
         if product_id is None:
             product_id = str(uuid.uuid4())
-
         original_name = uploaded_file.name
         ext = original_name.split(".")[-1].lower() if "." in original_name else "png"
         filename = f"{product_id}_{uuid.uuid4().hex[:8]}.{ext}"
 
-        # ارفع الصورة
         supabase.storage.from_(BUCKET_NAME).upload(
             path=filename,
             file=uploaded_file.getvalue(),
             file_options={"content-type": uploaded_file.type or f"image/{ext}"},
         )
-
-        # ارجع الرابط العام
         public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(filename)
         return public_url
-
     except Exception as e:
         st.error(f"Error uploading image: {e}")
         return ""
+
+
+# ============================================
+# 🛒 Cart
+# ============================================
+def init_cart():
+    if "cart" not in st.session_state:
+        st.session_state.cart = []
+
+
+def add_to_cart(product, category):
+    init_cart()
+    st.session_state.cart.append({**product, "category": category})
+
+
+def remove_from_cart(index):
+    init_cart()
+    if 0 <= index < len(st.session_state.cart):
+        st.session_state.cart.pop(index)
+
+
+def get_cart_count():
+    init_cart()
+    return len(st.session_state.cart)
+
+
+def get_cart_items():
+    init_cart()
+    return st.session_state.cart
+
+
+def get_cart_total():
+    init_cart()
+    total = 0
+    for item in st.session_state.cart:
+        price = item.get("price_after") or item.get("price", 0)
+        total += price
+    return total
+
+
+def clear_cart():
+    st.session_state.cart = []
 
 
 # ============================================
@@ -230,13 +260,11 @@ def get_whatsapp_link(product=None):
             msg += f" (السعر: {price_after:.0f} EGP بدل {price:.0f} EGP)"
         else:
             msg += f" (السعر: {price:.0f} EGP)"
-
     msg_encoded = msg.replace(" ", "%20").replace("\n", "%0A")
     return f"https://wa.me/{WHATSAPP_NUMBER}?text={msg_encoded}"
 
 
 def hide_streamlit_ui():
-    """إخفاء عناصر Streamlit"""
     st.markdown("""
 <style>
     header[data-testid="stHeader"] { display: none !important; }
@@ -259,34 +287,33 @@ def render_product_card(product):
     has_discount = price_after and price_after < price
     discount = calc_discount(price, price_after) if has_discount else 0
 
-    # دعم الصور المتعددة — نعرض أول صورة
     images = product.get("images", [])
     if not isinstance(images, list):
         images = []
     img_src = images[0] if images else ""
 
     if img_src:
-        img_html = f'<img src="{img_src}" style="width:100%;height:240px;object-fit:cover;border-radius:12px;">'
+        img_html = f'<img src="{img_src}" style="width:100%; height:240px; object-fit:cover; border-radius:12px;">'
     else:
-        img_html = '<div style="width:100%;height:240px;background:#2a2a2a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#666;">No Image</div>'
+        img_html = '<div style="width:100%; height:240px; background:#2a2a2a; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#666;">No Image</div>'
 
     badge = ""
     if has_discount:
-        badge = f'<span style="background:linear-gradient(135deg,#800020,#B22234);color:white;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:bold;">-{discount}%</span>'
+        badge = f'<span style="background:linear-gradient(135deg,#800020,#B22234); color:white; padding:5px 14px; border-radius:20px; font-size:13px; font-weight:bold;">-{discount}%</span>'
 
     if has_discount:
-        price_html = f'<span style="text-decoration:line-through;color:#666;font-size:15px;">{price:.0f} EGP</span> <span style="color:#800020;font-weight:bold;font-size:22px;margin-left:8px;">{price_after:.0f} EGP</span>'
+        price_html = f'<span style="text-decoration:line-through; color:#666; font-size:15px;">{price:.0f} EGP</span> <span style="color:#800020; font-weight:bold; font-size:22px; margin-left:8px;">{price_after:.0f} EGP</span>'
     else:
-        price_html = f'<span style="color:#F39C12;font-weight:bold;font-size:22px;">{price:.0f} EGP</span>'
+        price_html = f'<span style="color:#F39C12; font-weight:bold; font-size:22px;">{price:.0f} EGP</span>'
 
     st.markdown(f"""
-    <div style="border:2px solid #800020;border-radius:15px;padding:14px;background:#1a1a1a;margin-bottom:10px;box-shadow:0 4px 15px rgba(128,0,32,0.3);">
+    <div style="border:2px solid #800020; border-radius:15px; padding:14px; background:#1a1a1a; margin-bottom:10px; box-shadow:0 4px 15px rgba(128,0,32,0.3);">
         {img_html}
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
-            <div style="font-weight:700;font-size:17px;color:#ffffff;">{product['name']}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+            <div style="font-weight:700; font-size:17px; color:#ffffff;">{product['name']}</div>
             {badge}
         </div>
         <div style="margin-top:10px;">{price_html}</div>
-        <div style="color:#999;font-size:14px;margin-top:6px;">{product.get('description', '')}</div>
+        <div style="color:#999; font-size:14px; margin-top:6px;">{product.get('description', '')}</div>
     </div>
     """, unsafe_allow_html=True)
