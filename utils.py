@@ -1,6 +1,7 @@
 import uuid
 import streamlit as st
 from pathlib import Path
+from supabase import creat_client, Client
 
 # ============================================
 # Paths
