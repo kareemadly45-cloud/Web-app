@@ -14,11 +14,34 @@ UPLOADS_DIR = Path("uploads")
 # Categories
 # ============================================
 CATEGORIES = {
-    "home":     {"name": "Home",     "icon": "🏠", "page": "1_Home"},
-    "luxury":   {"name": "Luxury",   "icon": "💎", "page": "2_Luxury"},
-    "soree":    {"name": "Soree",    "icon": "🛍️", "page": "3_Soree"},
-    "discount": {"name": "Discount", "icon": "🔥", "page": "4_Discount"},
-}
+    "home": {
+        "name": "Home",
+        "icon": "🏠",
+        "page": "1_Home",
+        "color": "#FF6B6B",
+        "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop",
+    },
+    "luxury": {
+        "name": "Luxury",
+        "icon": "💎",
+        "page": "2_Luxury",
+        "color": "#9B59B6",
+        "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300&h=300&fit=crop",
+    },
+    "soree": {
+        "name": "Soree",
+        "icon": "🛍️",
+        "page": "3_Soree",
+        "color": "#3498DB",
+        "image": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=300&h=300&fit=crop",
+    },
+    "discount": {
+        "name": "Discount",
+        "icon": "🔥",
+        "page": "4_Discount",
+        "color": "#E74C3C",
+        "image": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=300&h=300&fit=crop",
+    }
 
 
 # ============================================
