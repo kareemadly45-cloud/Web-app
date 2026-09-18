@@ -1,14 +1,14 @@
-import json
 import uuid
 import streamlit as st
 from pathlib import Path
+from supabase import create_client, Client
 
 # ============================================
 # Paths
 # ============================================
 DATA_DIR = Path("data")
-DATA_FILE = DATA_DIR / "products.json"
 ASSETS_DIR = Path("assets")
+BUCKET_NAME = "product-images"
 
 # ============================================
 # 📱 WhatsApp Settings
@@ -24,110 +24,163 @@ try:
 except Exception:
     ADMIN_PASSWORD = "admin123"
 
+
+# ============================================
+# 🗄️ Supabase Client
+# ============================================
+@st.cache_resource
+def get_supabase() -> Client:
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
+
+
 # ============================================
 # Categories
 # ============================================
 CATEGORIES = {
     "home": {
-        "name": "Home",
-        "icon": "🏠",
-        "page": "1_Home",
-        "color": "#FF6B6B",
+        "name": "Home", "icon": "🏠", "page": "1_Home", "color": "#FF6B6B",
         "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop",
     },
     "luxury": {
-        "name": "Luxury",
-        "icon": "💎",
-        "page": "2_Luxury",
-        "color": "#9B59B6",
+        "name": "Luxury", "icon": "💎", "page": "2_Luxury", "color": "#9B59B6",
         "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300&h=300&fit=crop",
     },
     "soree": {
-        "name": "Soree",
-        "icon": "🛍️",
-        "page": "3_Soree",
-        "color": "#3498DB",
+        "name": "Soree", "icon": "🛍️", "page": "3_Soree", "color": "#3498DB",
         "image": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=300&h=300&fit=crop",
     },
     "discount": {
-        "name": "Discount",
-        "icon": "🔥",
-        "page": "4_Discount",
-        "color": "#E74C3C",
+        "name": "Discount", "icon": "🔥", "page": "4_Discount", "color": "#E74C3C",
         "image": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=300&h=300&fit=crop",
-    }
+    },
+}
 
 
 # ============================================
-# Database
+# Database (Supabase)
 # ============================================
 def init_db():
+    """مش محتاجة مع Supabase"""
     DATA_DIR.mkdir(exist_ok=True)
     ASSETS_DIR.mkdir(exist_ok=True)
-    if not DATA_FILE.exists():
-        default_data = {cat: [] for cat in CATEGORIES.keys()}
-        with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(default_data, f, ensure_ascii=False, indent=2)
-
-
-def load_products():
-    init_db()
-    with open(DATA_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def save_products(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def get_products(category):
-    return load_products().get(category, [])
+    """جلب منتجات كاتيجوري من Supabase"""
+    try:
+        supabase = get_supabase()
+        response = (
+            supabase.table("products")
+            .select("*")
+            .eq("category", category)
+            .order("created_at", desc=True)
+            .execute()
+        )
+        products = response.data or []
+        for p in products:
+            if not isinstance(p.get("images"), list):
+                p["images"] = []
+        return products
+    except Exception as e:
+        st.error(f"Error loading products: {e}")
+        return []
 
 
 def add_product(category, product):
-    data = load_products()
-    data.setdefault(category, []).append(product)
-    save_products(data)
+    """إضافة منتج في Supabase"""
+    try:
+        supabase = get_supabase()
+        data = {
+            "category": category,
+            "name": product["name"],
+            "description": product.get("description", ""),
+            "price": float(product.get("price", 0)),
+            "price_after": float(product.get("price_after", 0)),
+            "images": product.get("images", []),
+        }
+        response = supabase.table("products").insert(data).execute()
+        return response.data
+    except Exception as e:
+        st.error(f"Error adding product: {e}")
+        return None
 
 
 def update_product(category, product_id, updated):
-    data = load_products()
-    for i, p in enumerate(data.get(category, [])):
-        if p["id"] == product_id:
-            data[category][i] = updated
-            break
-    save_products(data)
+    """تعديل منتج"""
+    try:
+        supabase = get_supabase()
+        data = {
+            "name": updated["name"],
+            "description": updated.get("description", ""),
+            "price": float(updated.get("price", 0)),
+            "price_after": float(updated.get("price_after", 0)),
+            "images": updated.get("images", []),
+        }
+        supabase.table("products").update(data).eq("id", product_id).execute()
+        return True
+    except Exception as e:
+        st.error(f"Error updating product: {e}")
+        return False
 
 
 def delete_product(category, product_id):
-    data = load_products()
-    data[category] = [p for p in data.get(category, []) if p["id"] != product_id]
-    save_products(data)
+    """حذف منتج + صوره من Storage"""
+    try:
+        supabase = get_supabase()
+
+        # امسح الصور من Storage
+        product = supabase.table("products").select("images").eq("id", product_id).execute()
+        if product.data:
+            images = product.data[0].get("images", [])
+            for img_url in images:
+                try:
+                    filename = img_url.split("/")[-1]
+                    supabase.storage.from_(BUCKET_NAME).remove([filename])
+                except Exception:
+                    pass
+
+        # امسح المنتج
+        supabase.table("products").delete().eq("id", product_id).execute()
+        return True
+    except Exception as e:
+        st.error(f"Error deleting product: {e}")
+        return False
 
 
 # ============================================
-# 📸 Image Upload
+# 📸 Image Upload (Supabase Storage)
 # ============================================
 def save_uploaded_image(uploaded_file, product_id=None):
+    """حفظ الصورة في Supabase Storage وإرجاع الرابط"""
     if uploaded_file is None:
         return ""
 
-    ASSETS_DIR.mkdir(exist_ok=True)
+    try:
+        supabase = get_supabase()
 
-    original_name = uploaded_file.name
-    ext = original_name.split(".")[-1].lower() if "." in original_name else "png"
+        if product_id is None:
+            product_id = str(uuid.uuid4())
 
-    if product_id is None:
-        product_id = str(uuid.uuid4())
+        original_name = uploaded_file.name
+        ext = original_name.split(".")[-1].lower() if "." in original_name else "png"
+        filename = f"{product_id}_{uuid.uuid4().hex[:8]}.{ext}"
 
-    filename = f"{product_id}.{ext}"
-    filepath = ASSETS_DIR / filename
+        # ارفع الصورة
+        supabase.storage.from_(BUCKET_NAME).upload(
+            path=filename,
+            file=uploaded_file.getvalue(),
+            file_options={"content-type": uploaded_file.type or f"image/{ext}"},
+        )
 
-    with open(filepath, "wb") as f:
-        f.write(uploaded_file.getbuffer())
+        # ارجع الرابط العام
+        public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(filename)
+        return public_url
 
-    return str(filepath).replace("\\", "/")
+    except Exception as e:
+        st.error(f"Error uploading image: {e}")
+        return ""
 
 
 # ============================================
@@ -173,6 +226,7 @@ def get_whatsapp_link(product=None):
 
 
 def hide_streamlit_ui():
+    """إخفاء عناصر Streamlit"""
     st.markdown("""
 <style>
     header[data-testid="stHeader"] { display: none !important; }
@@ -195,8 +249,14 @@ def render_product_card(product):
     has_discount = price_after and price_after < price
     discount = calc_discount(price, price_after) if has_discount else 0
 
-    if product.get("image"):
-        img_html = f'<img src="{product["image"]}" style="width:100%;height:240px;object-fit:cover;border-radius:12px;">'
+    # دعم الصور المتعددة — نعرض أول صورة
+    images = product.get("images", [])
+    if not isinstance(images, list):
+        images = []
+    img_src = images[0] if images else ""
+
+    if img_src:
+        img_html = f'<img src="{img_src}" style="width:100%;height:240px;object-fit:cover;border-radius:12px;">'
     else:
         img_html = '<div style="width:100%;height:240px;background:#2a2a2a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#666;">No Image</div>'
 
@@ -220,25 +280,3 @@ def render_product_card(product):
         <div style="color:#999;font-size:14px;margin-top:6px;">{product.get('description', '')}</div>
     </div>
     """, unsafe_allow_html=True)
-
-
-
-# ============================================
-# إخفاء عناصر Streamlit
-# ============================================
-def hide_streamlit_ui():
-    """إخفاء عناصر Streamlit الافتراضية (Fork, GitHub, Toolbar)"""
-    st.markdown("""
-<style>
-    header[data-testid="stHeader"] { display: none !important; }
-    [data-testid="stToolbar"] { display: none !important; }
-    [data-testid="stToolbarActions"] { display: none !important; }
-    .stDeployButton { display: none !important; }
-    [data-testid="stAppDeployButton"] { display: none !important; }
-    [data-testid="stStatusWidget"] { display: none !important; }
-    #MainMenu { visibility: hidden !important; }
-    footer { visibility: hidden !important; }
-    [data-testid="stDecoration"] { display: none !important; }
-    [data-testid="manage-app-button"] { display: none !important; }
-</style>
-""", unsafe_allow_html=True)
