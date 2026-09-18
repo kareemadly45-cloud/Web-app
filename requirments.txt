@@ -1,2 +1,2 @@
-streamlit
-supabase==2.31.0
+streamlit==1.38.0
+supabase==2.9.0
