@@ -38,7 +38,9 @@ except Exception:
 # ============================================
 @st.cache_resource
 def get_supabase():
-    project_ref = "scpaqujqzckxuuyibsze"
+    # بناء الرابط بحروف لاتينية مضمونة 100%
+    # 101 في ASCII = الحرف 'e' (Latin) — مستحيل يكون روسي
+    project_ref = "scpaqujqzckxuuyibsz" + chr(101)
     url = "https://" + project_ref + ".supabase.co"
     key = st.secrets["SUPABASE_KEY"]
     return create_client(url, key)
