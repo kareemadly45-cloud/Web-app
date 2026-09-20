@@ -252,7 +252,7 @@ def render_product_card(product):
         <div style="color:#999; font-size:14px; margin-top:6px;">{product.get('description', '')}</div>
     </div>
     """, unsafe_allow_html=True)
-    def hide_streamlit_ui():
+def hide_streamlit_ui():
     st.markdown("""
 <style>
     header[data-testid="stHeader"] { display: none !important; }
