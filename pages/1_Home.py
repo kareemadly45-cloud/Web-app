@@ -2,11 +2,9 @@ import streamlit as st
 import uuid
 from utils import (
     get_products, add_product, update_product, delete_product,
-    render_product_card, calc_discount,
-    is_admin, login_admin, logout_admin,
-    save_uploaded_image
+    render_product_card, is_admin, logout_admin, save_uploaded_image,
+    hide_streamlit_ui, calc_discount, get_whatsapp_link
 )
-
 # ============================================
 CATEGORY_SLUG = "home"
 CATEGORY_NAME = "Home"
@@ -15,6 +13,7 @@ CATEGORY_ICON = "🏠"
 
 st.set_page_config(page_title=f"{CATEGORY_NAME} - La Mariposa",
                    page_icon=CATEGORY_ICON, layout="wide")
+hide_streamlit_ui()
 
 # إخفاء Sidebar
 st.markdown("""
