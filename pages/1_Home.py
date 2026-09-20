@@ -66,25 +66,31 @@ if admin_mode:
             ) if has_disc else 0.0
 
             # 🖼️ رفع صورة من الجهاز
-            uploaded = st.file_uploader(
-                "📷 ارفع صورة المنتج",
-                type=["png", "jpg", "jpeg", "webp"]
-            )
+           uploaded = st.file_uploader(
+            "📷 ارفع صور المنتج (يمكن اختيار أكثر من صورة)",
+            type=["png", "jpg", "jpeg", "webp"],
+            accept_multiple_files=True,
+             key=f"upload_{CATEGORY_SLUG}"
+                )
 
             if st.form_submit_button("➕ Add Product", use_container_width=True):
                 if not name or price <= 0:
                     st.error("Name and Price are required.")
                 else:
                     # حفظ الصورة لو موجودة
-                    img_path = save_uploaded_image(uploaded) if uploaded else ""
-                    
+                    image_paths = []
+            if uploaded_files:
+                for f in uploaded_files:
+                    p = save_uploaded_image(f, product_id)
+                    if p:
+                        image_paths.append(p)
                     add_product(CATEGORY_SLUG, {
                         "id": str(uuid.uuid4()),
                         "name": name,
                         "description": desc,
                         "price": price,
                         "price_after": price_after if has_disc else 0,
-                        "image": img_path,
+                        "images": image_paths,
                     })
                     st.success(f"✅ '{name}' added!")
                     st.rerun()
@@ -176,8 +182,14 @@ if st.session_state.get("view_product"):
     st.markdown(f"### 👁️ {p['name']}")
     cc1, cc2 = st.columns([1, 2])
     with cc1:
-        if p.get("image"):
-            st.image(p["image"], use_container_width=True)
+        images = p.get("images", [])
+    if images:
+        st.image(images[0], use_container_width=True)
+        if len(images) > 1:
+            cols = st.columns(min(len(images) - 1, 4))
+            for i, img in enumerate(images[1:]):
+                with cols[i % 4]:
+                    st.image(img, use_container_width=True)
     with cc2:
         st.write(p.get("description", ""))
         price, price_after = p.get("price", 0), p.get("price_after", 0)
