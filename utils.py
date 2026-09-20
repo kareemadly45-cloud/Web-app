@@ -111,8 +111,41 @@ def delete_product(category, product_id):
 # 📸 Image Upload
 # ============================================
 def save_uploaded_image(uploaded_file, product_id=None):
-    """يحفظ الصورة المرفوعة في assets/ ويرجع المسار"""
+    """يحفظ الصورة المرفوعة مع تصغيرها أوتوماتيك"""
     if uploaded_file is None:
+        return ""
+
+    ASSETS_DIR.mkdir(exist_ok=True)
+
+    if product_id is None:
+        product_id = str(uuid.uuid4())
+
+    try:
+        from PIL import Image
+        import io
+
+        # افتح الصورة
+        img = Image.open(uploaded_file)
+
+        # حوّلها RGB لو مش كذلك (للـ PNG بـ transparent)
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+
+        # صغّرها لو أكبر من 1200 بكسل
+        max_size = 1200
+        if img.width > max_size or img.height > max_size:
+            img.thumbnail((max_size, max_size), Image.LANCZOS)
+
+        # احفظها كـ JPEG بجودة 85%
+        filename = f"{product_id}_{uuid.uuid4().hex[:8]}.jpg"
+        filepath = ASSETS_DIR / filename
+
+        img.save(filepath, "JPEG", quality=85, optimize=True)
+
+        return str(filepath).replace("\\", "/")
+
+    except Exception as e:
+        st.error(f"Error processing image: {e}")
         return ""
 
     ASSETS_DIR.mkdir(exist_ok=True)
