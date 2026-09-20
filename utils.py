@@ -1,8 +1,6 @@
 import json
-import uuid
 import streamlit as st
 from pathlib import Path
-from supabase import create_client, Client
 
 # ============================================
 # Paths
@@ -12,32 +10,18 @@ DATA_FILE = DATA_DIR / "products.json"
 ASSETS_DIR = Path("assets")
 
 # ============================================
-# 📱 WhatsApp
+# 📱 WhatsApp Settings
 # ============================================
-WHATSAPP_NUMBER = "201012345678"
+WHATSAPP_NUMBER = "201012345678"   # ← رقمك هنا (بدون + وبدون مسافات)
 WHATSAPP_MESSAGE = "مرحبا، عايز أستفسر عن منتجات La Mariposa Store"
 
 # ============================================
-# 🔐 Admin
+# 🔐 Admin Password
 # ============================================
 try:
     ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
 except Exception:
     ADMIN_PASSWORD = "admin123"
-
-# ============================================
-# 🗄️ Supabase
-# ============================================
-BUCKET_NAME = "product-images"
-
-@st.cache_resource
-def get_supabase():
-    # بناء الرابط بحروف لاتينية مضمونة
-    project_ref = "scpaqujqzckxuuyibsz" + chr(101)
-    url = "https://" + project_ref + ".supabase.co"
-    key = st.secrets["SUPABASE_KEY"]
-    return create_client(url, key)
-
 # ============================================
 # Categories
 # ============================================
@@ -79,110 +63,76 @@ CATEGORIES = {
 def init_db():
     DATA_DIR.mkdir(exist_ok=True)
     ASSETS_DIR.mkdir(exist_ok=True)
+    if not DATA_FILE.exists():
+        default_data = {cat: [] for cat in CATEGORIES.keys()}
+        with open(DATA_FILE, "w", encoding="utf-8") as f:
+            json.dump(default_data, f, ensure_ascii=False, indent=2)
+
+
+def load_products():
+    init_db()
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_products(data):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def get_products(category):
-    try:
-        supabase = get_supabase()
-        response = (
-            supabase.table("products")
-            .select("*")
-            .eq("category", category)
-            .order("created_at", desc=True)
-            .execute()
-        )
-        products = response.data or []
-        for p in products:
-            if not isinstance(p.get("images"), list):
-                p["images"] = []
-        return products
-    except Exception as e:
-        st.error(f"Error loading products: {e}")
-        return []
+    return load_products().get(category, [])
 
 
 def add_product(category, product):
-    try:
-        supabase = get_supabase()
-        data = {
-            "category": category,
-            "name": product["name"],
-            "description": product.get("description", ""),
-            "price": float(product.get("price", 0)),
-            "price_after": float(product.get("price_after", 0)),
-            "images": product.get("images", []),
-        }
-        response = supabase.table("products").insert(data).execute()
-        return response.data
-    except Exception as e:
-        st.error(f"Error adding product: {e}")
-        return None
+    data = load_products()
+    data.setdefault(category, []).append(product)
+    save_products(data)
 
 
 def update_product(category, product_id, updated):
-    try:
-        supabase = get_supabase()
-        data = {
-            "name": updated["name"],
-            "description": updated.get("description", ""),
-            "price": float(updated.get("price", 0)),
-            "price_after": float(updated.get("price_after", 0)),
-            "images": updated.get("images", []),
-        }
-        supabase.table("products").update(data).eq("id", product_id).execute()
-        return True
-    except Exception as e:
-        st.error(f"Error updating product: {e}")
-        return False
+    data = load_products()
+    for i, p in enumerate(data.get(category, [])):
+        if p["id"] == product_id:
+            data[category][i] = updated
+            break
+    save_products(data)
 
 
 def delete_product(category, product_id):
-    try:
-        supabase = get_supabase()
-        product = supabase.table("products").select("images").eq("id", product_id).execute()
-        if product.data:
-            images = product.data[0].get("images", [])
-            for img_url in images:
-                try:
-                    filename = img_url.split("/")[-1]
-                    supabase.storage.from_(BUCKET_NAME).remove([filename])
-                except Exception:
-                    pass
-        supabase.table("products").delete().eq("id", product_id).execute()
-        return True
-    except Exception as e:
-        st.error(f"Error deleting product: {e}")
-        return False
+    data = load_products()
+    data[category] = [p for p in data.get(category, []) if p["id"] != product_id]
+    save_products(data)
 
 
 # ============================================
 # 📸 Image Upload
 # ============================================
 def save_uploaded_image(uploaded_file, product_id=None):
+    """يحفظ الصورة المرفوعة في assets/ ويرجع المسار"""
     if uploaded_file is None:
         return ""
-    try:
-        supabase = get_supabase()
-        if product_id is None:
-            product_id = str(uuid.uuid4())
-        original_name = uploaded_file.name
-        ext = original_name.split(".")[-1].lower() if "." in original_name else "png"
-        filename = f"{product_id}_{uuid.uuid4().hex[:8]}.{ext}"
 
-        supabase.storage.from_(BUCKET_NAME).upload(
-            path=filename,
-            file=uploaded_file.getvalue(),
-            file_options={"content-type": uploaded_file.type or f"image/{ext}"},
-        )
-        public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(filename)
-        return public_url
-    except Exception as e:
-        st.error(f"Error uploading image: {e}")
-        return ""
+    ASSETS_DIR.mkdir(exist_ok=True)
 
+    original_name = uploaded_file.name
+    ext = original_name.split(".")[-1].lower() if "." in original_name else "png"
+
+    # لو مفيش product_id، نستخدم UUID
+    if product_id is None:
+        import uuid
+        product_id = str(uuid.uuid4())
+
+    filename = f"{product_id}.{ext}"
+    filepath = ASSETS_DIR / filename
+
+    with open(filepath, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    return str(filepath).replace("\\", "/")
 
 # ============================================
-# 🛒 Cart
+# 🛒 Cart Functions  ✅ (المهمة)
 # ============================================
 def init_cart():
     if "cart" not in st.session_state:
@@ -190,27 +140,32 @@ def init_cart():
 
 
 def add_to_cart(product, category):
+    """إضافة منتج للسلة"""
     init_cart()
     st.session_state.cart.append({**product, "category": category})
 
 
 def remove_from_cart(index):
+    """حذف منتج من السلة بالترتيب"""
     init_cart()
     if 0 <= index < len(st.session_state.cart):
         st.session_state.cart.pop(index)
 
 
 def get_cart_count():
+    """عدد المنتجات في السلة"""
     init_cart()
     return len(st.session_state.cart)
 
 
 def get_cart_items():
+    """كل المنتجات في السلة"""
     init_cart()
     return st.session_state.cart
 
 
 def get_cart_total():
+    """إجمالي سعر السلة"""
     init_cart()
     total = 0
     for item in st.session_state.cart:
@@ -220,6 +175,7 @@ def get_cart_total():
 
 
 def clear_cart():
+    """تفريغ السلة"""
     st.session_state.cart = []
 
 
@@ -260,25 +216,9 @@ def get_whatsapp_link(product=None):
             msg += f" (السعر: {price_after:.0f} EGP بدل {price:.0f} EGP)"
         else:
             msg += f" (السعر: {price:.0f} EGP)"
+
     msg_encoded = msg.replace(" ", "%20").replace("\n", "%0A")
     return f"https://wa.me/{WHATSAPP_NUMBER}?text={msg_encoded}"
-
-
-def hide_streamlit_ui():
-    st.markdown("""
-<style>
-    header[data-testid="stHeader"] { display: none !important; }
-    [data-testid="stToolbar"] { display: none !important; }
-    [data-testid="stToolbarActions"] { display: none !important; }
-    .stDeployButton { display: none !important; }
-    [data-testid="stAppDeployButton"] { display: none !important; }
-    [data-testid="stStatusWidget"] { display: none !important; }
-    #MainMenu { visibility: hidden !important; }
-    footer { visibility: hidden !important; }
-    [data-testid="stDecoration"] { display: none !important; }
-    [data-testid="manage-app-button"] { display: none !important; }
-</style>
-""", unsafe_allow_html=True)
 
 
 def render_product_card(product):
@@ -287,13 +227,8 @@ def render_product_card(product):
     has_discount = price_after and price_after < price
     discount = calc_discount(price, price_after) if has_discount else 0
 
-    images = product.get("images", [])
-    if not isinstance(images, list):
-        images = []
-    img_src = images[0] if images else ""
-
-    if img_src:
-        img_html = f'<img src="{img_src}" style="width:100%; height:240px; object-fit:cover; border-radius:12px;">'
+    if product.get("image"):
+        img_html = f'<img src="{product["image"]}" style="width:100%; height:240px; object-fit:cover; border-radius:12px;">'
     else:
         img_html = '<div style="width:100%; height:240px; background:#2a2a2a; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#666;">No Image</div>'
 
