@@ -227,34 +227,35 @@ def render_product_card(product):
     has_discount = price_after and price_after < price
     discount = calc_discount(price, price_after) if has_discount else 0
 
-    if product.get("image"):
-        img_html = f'<img src="{product["image"]}" style="width:100%; height:240px; object-fit:cover; border-radius:12px;">'
+    images = product.get("images", [])
+    if not isinstance(images, list):
+        images = []
+    img_src = images[0] if images else ""
+
+    if img_src:
+        img_html = '<img src="' + img_src + '" style="width:100%;height:240px;object-fit:cover;border-radius:12px;">'
     else:
-        img_html = '<div style="width:100%; height:240px; background:#2a2a2a; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#666;">No Image</div>'
+        img_html = '<div style="width:100%;height:240px;background:#2a2a2a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#666;">No Image</div>'
 
     badge = ""
     if has_discount:
-        badge = f'<span style="background:linear-gradient(135deg,#800020,#B22234); color:white; padding:5px 14px; border-radius:20px; font-size:13px; font-weight:bold;">-{discount}%</span>'
+        badge = '<span style="background:linear-gradient(135deg,#800020,#B22234);color:white;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:bold;">-' + str(discount) + '%</span>'
 
     if has_discount:
-        price_html = f'<span style="text-decoration:line-through; color:#666; font-size:15px;">{price:.0f} EGP</span> <span style="color:#800020; font-weight:bold; font-size:22px; margin-left:8px;">{price_after:.0f} EGP</span>'
+        price_html = '<span style="text-decoration:line-through;color:#666;font-size:15px;">' + str(int(price)) + ' EGP</span> <span style="color:#800020;font-weight:bold;font-size:22px;margin-left:8px;">' + str(int(price_after)) + ' EGP</span>'
     else:
-        price_html = f'<span style="color:#F39C12; font-weight:bold; font-size:22px;">{price:.0f} EGP</span>'
+        price_html = '<span style="color:#F39C12;font-weight:bold;font-size:22px;">' + str(int(price)) + ' EGP</span>'
 
-    st.markdown(f"""
-    <div style="border:2px solid #800020; border-radius:15px; padding:14px; background:#1a1a1a; margin-bottom:10px; box-shadow:0 4px 15px rgba(128,0,32,0.3);">
-        {img_html}
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-            <div style="font-weight:700; font-size:17px; color:#ffffff;">{product['name']}</div>
-            {badge}
-        </div>
-        <div style="margin-top:10px;">{price_html}</div>
-        <div style="color:#999; font-size:14px; margin-top:6px;">{product.get('description', '')}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    desc = product.get('description', '')
+    name = product['name']
+
+    html = '<div style="border:2px solid #800020;border-radius:15px;padding:14px;background:#1a1a1a;margin-bottom:10px;box-shadow:0 4px 15px rgba(128,0,32,0.3);">' + img_html + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;"><div style="font-weight:700;font-size:17px;color:#ffffff;">' + name + '</div>' + badge + '</div><div style="margin-top:10px;">' + price_html + '</div><div style="color:#999;font-size:14px;margin-top:6px;">' + desc + '</div></div>'
+
+    st.markdown(html, unsafe_allow_html=True)
+    
 def hide_streamlit_ui():
     st.markdown("""
-<style>
+    <style>
     header[data-testid="stHeader"] { display: none !important; }
     [data-testid="stToolbar"] { display: none !important; }
     [data-testid="stToolbarActions"] { display: none !important; }
