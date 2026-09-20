@@ -1,5 +1,6 @@
 import json
 import uuid
+import base64 
 import streamlit as st
 from pathlib import Path
 
