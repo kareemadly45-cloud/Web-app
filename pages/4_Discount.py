@@ -12,15 +12,27 @@ CATEGORY_NAME = "Discount"
 CATEGORY_ICON = "🔥"
 # ============================================
 
-st.set_page_config(page_title=f"{CATEGORY_NAME} - La Mariposa", page_icon=CATEGORY_ICON, layout="wide")
+st.set_page_config(page_title=f"{CATEGORY_NAME} - La Mariposa",
+                   page_icon=CATEGORY_ICON, layout="wide")
 hide_streamlit_ui()
+
+# إخفاء Sidebar
+st.markdown("""
+<style>
+    [data-testid="stSidebar"] { display: none; }
+    [data-testid="collapsedControl"] { display: none; }
+</style>
+""", unsafe_allow_html=True)
 
 admin_mode = is_admin()
 
+# ============================================
 # Header
+# ============================================
 col1, col2 = st.columns([5, 1])
 with col1:
-    st.markdown(f'<div style="font-size:26px;font-weight:700;">{CATEGORY_ICON} {CATEGORY_NAME}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="font-size:26px; font-weight:700;">{CATEGORY_ICON} {CATEGORY_NAME}</div>',
+                unsafe_allow_html=True)
 with col2:
     if admin_mode:
         if st.button("🚪 Logout", key=f"logout_{CATEGORY_SLUG}", use_container_width=True):
@@ -33,37 +45,42 @@ if st.button("⬅️ Back to Home"):
 st.markdown("---")
 
 # ============================================
-# Add Product (Admin)
+# 🟢 Add Product (Admin Only) — مع File Uploader
 # ============================================
 if admin_mode:
     with st.expander("➕ Add New Product", expanded=False):
         with st.form(f"add_form_{CATEGORY_SLUG}", clear_on_submit=True):
             name = st.text_input("Product Name")
             desc = st.text_area("Description")
-
-            c1, c2 = st.columns(2)
-            with c1:
+            
+            col1, col2 = st.columns(2)
+            with col1:
                 price = st.number_input("Price (EGP)", min_value=0.0, value=0.0, step=50.0)
-            with c2:
+            with col2:
                 has_disc = st.checkbox("Has Discount?")
+            
+            price_after = st.number_input(
+                "Price After Discount (EGP)",
+                min_value=0.0,
+                value=0.0,
+                step=50.0
+            ) if has_disc else 0.0
 
-            price_after = st.number_input("Price After Discount (EGP)", min_value=0.0, value=0.0, step=50.0) if has_disc else 0.0
-
+            # 🖼️ رفع صورة من الجهاز
             uploaded = st.file_uploader(
                 "📷 ارفع صورة المنتج",
-                type=["png", "jpg", "jpeg", "webp"],
-                key=f"upload_new_{CATEGORY_SLUG}"
+                type=["png", "jpg", "jpeg", "webp"]
             )
 
             if st.form_submit_button("➕ Add Product", use_container_width=True):
                 if not name or price <= 0:
                     st.error("Name and Price are required.")
                 else:
-                    product_id = str(uuid.uuid4())
-                    img_path = save_uploaded_image(uploaded, product_id) if uploaded else ""
-
+                    # حفظ الصورة لو موجودة
+                    img_path = save_uploaded_image(uploaded) if uploaded else ""
+                    
                     add_product(CATEGORY_SLUG, {
-                        "id": product_id,
+                        "id": str(uuid.uuid4()),
                         "name": name,
                         "description": desc,
                         "price": price,
@@ -81,18 +98,13 @@ st.markdown(f"### All {CATEGORY_NAME} ({len(products)})")
 
 if not products:
     st.info("لا توجد منتجات بعد.")
+    if not admin_mode:
+        st.caption("👈 لو انت الأدمن، سجّل دخول من صفحة Admin.")
 else:
     cols = st.columns(3)
     for idx, product in enumerate(products):
         with cols[idx % 3]:
             render_product_card(product)
-
-            # WhatsApp
-            st.link_button(
-                "💬 WhatsApp",
-                get_whatsapp_link(product),
-                use_container_width=True
-            )
 
             if admin_mode:
                 c1, c2 = st.columns(2)
@@ -109,7 +121,9 @@ else:
                     st.session_state["view_product"] = product
                     st.rerun()
 
+            # ============================================
             # Edit Form
+            # ============================================
             if admin_mode and st.session_state.get(f"editing_{product['id']}"):
                 with st.form(f"edit_form_{product['id']}"):
                     st.write(f"**Editing: {product['name']}**")
@@ -117,12 +131,17 @@ else:
                     desc = st.text_area("Description", value=product.get("description", ""))
                     price = st.number_input("Price", value=float(product.get("price", 0)), min_value=0.0)
                     has_disc = st.checkbox("Has Discount", value=bool(product.get("price_after", 0)))
-                    price_after = st.number_input("Price After Discount", value=float(product.get("price_after", 0)), min_value=0.0) if has_disc else 0.0
+                    price_after = st.number_input(
+                        "Price After Discount",
+                        value=float(product.get("price_after", 0)),
+                        min_value=0.0
+                    ) if has_disc else 0.0
 
+                    # 🖼️ رفع صورة جديدة (اختياري)
                     uploaded = st.file_uploader(
                         "📷 ارفع صورة جديدة (اختياري)",
                         type=["png", "jpg", "jpeg", "webp"],
-                        key=f"upload_edit_{product['id']}"
+                        key=f"upload_{product['id']}"
                     )
 
                     if product.get("image"):
@@ -131,8 +150,9 @@ else:
 
                     cc1, cc2 = st.columns(2)
                     if cc1.form_submit_button("💾 Save", use_container_width=True):
-                        img_path = save_uploaded_image(uploaded, product["id"]) if uploaded else product.get("image", "")
-
+                        # لو رفع صورة جديدة، استخدمها — غير كده استخدم القديمة
+                        img_path = save_uploaded_image(uploaded) if uploaded else product.get("image", "")
+                        
                         update_product(CATEGORY_SLUG, product["id"], {
                             "id": product["id"],
                             "name": name,
@@ -143,7 +163,7 @@ else:
                         })
                         st.session_state[f"editing_{product['id']}"] = False
                         st.rerun()
-
+                    
                     if cc2.form_submit_button("❌ Cancel", use_container_width=True):
                         st.session_state[f"editing_{product['id']}"] = False
                         st.rerun()
@@ -155,7 +175,6 @@ if st.session_state.get("view_product"):
     p = st.session_state["view_product"]
     st.markdown("---")
     st.markdown(f"### 👁️ {p['name']}")
-
     cc1, cc2 = st.columns([1, 2])
     with cc1:
         if p.get("image"):
@@ -167,9 +186,6 @@ if st.session_state.get("view_product"):
             st.markdown(f"~~{price:.0f} EGP~~ → **{price_after:.0f} EGP**")
         else:
             st.markdown(f"**{price:.0f} EGP**")
-
-    st.link_button("💬 WhatsApp Us", get_whatsapp_link(p), use_container_width=True)
-
     if st.button("❌ Close"):
         st.session_state["view_product"] = None
         st.rerun()
