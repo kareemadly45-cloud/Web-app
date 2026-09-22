@@ -6,6 +6,7 @@ from utils import (
 
 # ============================================
 st.set_page_config(page_title="La Mariposa", page_icon="💎", layout="wide")
+hide_streamlit_ui()
 init_db()
 
 # ============================================
