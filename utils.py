@@ -168,6 +168,38 @@ def update_product(category, product_id, updated):
 
 def delete_product(category, product_id):
     data = load_products()
+    
+    # 1) هات بيانات المنتج قبل الحذف
+    product_to_delete = None
+    for p in data.get(category, []):
+        if p["id"] == product_id:
+            product_to_delete = p
+            break
+    
+    # 2) احذف الصور من Cloudinary
+    if product_to_delete and get_cloudinary_config():
+        images = get_product_images(product_to_delete)
+        for img_url in images:
+            if "cloudinary.com" in img_url:
+                try:
+                    # استخرج الـ public_id من الرابط
+                    # مثال: .../upload/v123/lamariposa_products/abc.jpg
+                    # الـ public_id = "lamariposa_products/abc"
+                    parts = img_url.split("/upload/")
+                    if len(parts) > 1:
+                        path_with_version = parts[1]
+                        # شيل الـ version (v123/) لو موجود
+                        if path_with_version.startswith("v"):
+                            slash_idx = path_with_version.find("/")
+                            if slash_idx > 0:
+                                path_with_version = path_with_version[slash_idx+1:]
+                        # شيل الـ extension
+                        public_id = path_with_version.rsplit(".", 1)[0]
+                        cloudinary.uploader.destroy(public_id)
+                except Exception:
+                    pass
+    
+    # 3) احذف المنتج من البيانات
     data[category] = [p for p in data.get(category, []) if p["id"] != product_id]
     return save_products(data)
     
