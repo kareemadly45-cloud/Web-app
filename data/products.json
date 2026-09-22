@@ -29,6 +29,14 @@
       "images": [
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790093473/lamariposa_products/iywmdoyncytwmdphgv4a.jpg"
       ]
+    },
+    {
+      "id": "e8a01c4f-2eab-45d4-9f20-d2ac192605d8",
+      "name": "Ba",
+      "description": "Bag",
+      "price": 300.0,
+      "price_after": 0,
+      "images": []
     }
   ],
   "luxury": [
