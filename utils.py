@@ -596,100 +596,53 @@ def get_whatsapp_link(product=None):
 # Streamlit UI
 # ============================================
 def hide_streamlit_ui():
-    st.markdown("""
-<style>
-    /* ============================================
-       إخفاء شريط Streamlit العلوي بالكامل
-       ============================================ */
 
-    /* إخفاء الـ Header */
-    header[data-testid="stHeader"] {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        min-height: 0 !important;
-    }
+    st.markdown(
+        """
+        <style>
+            header[data-testid="stHeader"] {
+                display: none !important;
+            }
 
-    /* إخفاء الـ Toolbar */
-    [data-testid="stToolbar"] {
-        display: none !important;
-        visibility: hidden !important;
-    }
+            [data-testid="stToolbar"] {
+                display: none !important;
+            }
 
-    [data-testid="stToolbarActions"] {
-        display: none !important;
-        visibility: hidden !important;
-    }
+            [data-testid="stToolbarActions"] {
+                display: none !important;
+            }
 
-    /* إخفاء زر Share */
-    [data-testid="stShareButton"],
-    button[kind="header"],
-    [data-testid="stBaseButton-header"] {
-        display: none !important;
-        visibility: hidden !important;
-    }
+            .stDeployButton {
+                display: none !important;
+            }
 
-    /* إخفاء زر Deploy */
-    .stDeployButton,
-    [data-testid="stAppDeployButton"],
-    [data-testid="stDeployButton"] {
-        display: none !important;
-    }
+            [data-testid="stAppDeployButton"] {
+                display: none !important;
+            }
 
-    /* إخفاء القائمة الرئيسية (الـ 3 نقط) */
-    #MainMenu {
-        visibility: hidden !important;
-        display: none !important;
-    }
+            [data-testid="stStatusWidget"] {
+                display: none !important;
+            }
 
-    /* إخفاء Status Widget */
-    [data-testid="stStatusWidget"] {
-        display: none !important;
-    }
+            #MainMenu {
+                visibility: hidden !important;
+            }
 
-    /* إخفاء الفوتر */
-    footer {
-        visibility: hidden !important;
-        display: none !important;
-    }
+            footer {
+                visibility: hidden !important;
+            }
 
-    /* إخفاء Decoration (الشريط الملون فوق) */
-    [data-testid="stDecoration"] {
-        display: none !important;
-    }
+            [data-testid="stDecoration"] {
+                display: none !important;
+            }
 
-    /* إخفاء Manage app button */
-    [data-testid="manage-app-button"] {
-        display: none !important;
-    }
-
-    /* إخفاء كل الأزرار في الـ header */
-    header button {
-        display: none !important;
-        visibility: hidden !important;
-    }
-
-    /* إخفاء كل اللي فوق في الصفحة (Toolbar container) */
-    .stApp > header {
-        display: none !important;
-    }
-
-    /* إخفاء رسائل الأخطاء */
-    div[data-testid="stAlert"],
-    div[data-baseweb="notification"],
-    div.stAlert,
-    .stException,
-    div[data-testid="stException"],
-    div[role="alert"] {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
+            [data-testid="manage-app-button"] {
+                display: none !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # ============================================
@@ -840,4 +793,4 @@ def render_product_card(product):
     st.markdown(
         html,
         unsafe_allow_html=True
-    )
+        )
