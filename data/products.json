@@ -1,5 +1,14 @@
 {
-  "home": [],
+  "home": [
+    {
+      "id": "e793fb1e-709f-4337-9108-8634d71015c9",
+      "name": "Bag",
+      "description": "Bag",
+      "price": 100.0,
+      "price_after": 0,
+      "images": []
+    }
+  ],
   "luxury": [],
   "soree": [],
   "discount": []
