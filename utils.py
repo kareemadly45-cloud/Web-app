@@ -106,44 +106,39 @@ def get_github_file():
         None, None
     """
 
-    if not github_enabled():
-        return None, None
+    if response.status_code == 404:
+    # الملف مش موجود على GitHub
+    return None, None
 
-    url = (
-        f"{GITHUB_API_URL}/repos/"
-        f"{GITHUB_REPO}/contents/"
-        f"{GITHUB_FILE_PATH}"
-    )
+response.raise_for_status()
 
-    params = {
-        "ref": GITHUB_BRANCH
-    }
+result = response.json()
 
-    try:
-        response = requests.get(
-            url,
-            headers=github_headers(),
-            params=params,
-            timeout=15
-        )
+encoded_content = result.get("content", "")
+sha = result.get("sha")
 
-        if response.status_code == 404:
-            return None, None
+# GitHub ممكن يرجع المحتوى مع newline
+encoded_content = encoded_content.replace("\n", "")
 
-        response.raise_for_status()
+# لو الملف فاضي
+if not encoded_content:
+    return None, sha
 
-        result = response.json()
+try:
+    decoded = base64.b64decode(encoded_content).decode("utf-8").strip()
+except Exception:
+    return None, sha
 
-        encoded_content = result.get("content", "")
-        sha = result.get("sha")
+# لو المحتوى فاضي أو مش JSON
+if not decoded:
+    return None, sha
 
-        # GitHub ممكن يرجع المحتوى مع newline
-        encoded_content = encoded_content.replace("\n", "")
+try:
+    data = json.loads(decoded)
+except json.JSONDecodeError:
+    return None, sha
 
-        decoded = base64.b64decode(encoded_content).decode("utf-8")
-        data = json.loads(decoded)
-
-        return data, sha
+return data, sha
 
     except Exception as e:
         st.error(f"GitHub read error: {e}")
@@ -151,15 +146,10 @@ def get_github_file():
 
 
 def save_to_github(data, sha=None):
-    """
-    يحفظ products.json على GitHub.
-    """
+    """يحفظ products.json على GitHub (ينشئه لو مش موجود)"""
 
     if not github_enabled():
-        st.error(
-            "GitHub storage is not configured. "
-            "Please add GITHUB_TOKEN and GITHUB_REPO to Streamlit Secrets."
-        )
+        st.error("GitHub not configured.")
         return False
 
     url = (
@@ -168,12 +158,7 @@ def save_to_github(data, sha=None):
         f"{GITHUB_FILE_PATH}"
     )
 
-    json_content = json.dumps(
-        data,
-        ensure_ascii=False,
-        indent=2
-    )
-
+    json_content = json.dumps(data, ensure_ascii=False, indent=2)
     encoded_content = base64.b64encode(
         json_content.encode("utf-8")
     ).decode("utf-8")
@@ -184,7 +169,6 @@ def save_to_github(data, sha=None):
         "branch": GITHUB_BRANCH,
     }
 
-    # لو الملف موجود لازم نبعت SHA
     if sha:
         payload["sha"] = sha
 
@@ -201,7 +185,6 @@ def save_to_github(data, sha=None):
                 error_message = response.json().get("message", response.text)
             except Exception:
                 error_message = response.text
-
             st.error(f"GitHub save error: {error_message}")
             return False
 
@@ -323,51 +306,27 @@ def load_products():
 
 
 def save_products(data):
-    """
-    حفظ المنتجات.
+    """حفظ المنتجات في GitHub + نسخة محلية"""
 
-    GitHub هو التخزين الأساسي.
-    Local مجرد نسخة احتياطية.
-    """
-
-    # ========================================
-    # حفظ نسخة محلية
-    # ========================================
-    DATA_DIR.mkdir(exist_ok=True)
-
+    # 1) احفظ محلياً
     try:
+        DATA_DIR.mkdir(exist_ok=True)
         with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(
-                data,
-                f,
-                ensure_ascii=False,
-                indent=2
-            )
+            json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         st.error(f"Local save error: {e}")
 
-    # ========================================
-    # GitHub
-    # ========================================
+    # 2) ارفع على GitHub
     if github_enabled():
+        # جيب أحدث SHA (مهم جداً)
+        _, sha = get_github_file()
 
-        # نجيب أحدث SHA
-        current_data, sha = get_github_file()
+        # لو الملف مش موجود على GitHub، نرفعه جديد
+        success = save_to_github(data, sha=sha)
 
-        success = save_to_github(
-            data,
-            sha=sha
-        )
+        if not success:
+            return False
 
-        if success:
-            # نمسح Cache عشان البيانات الجديدة تظهر فورًا
-            load_products.clear()
-            return True
-
-        return False
-
-    # لو GitHub مش متفعل
-    load_products.clear()
     return True
 
 
