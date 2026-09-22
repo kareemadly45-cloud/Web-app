@@ -33,7 +33,7 @@ GITHUB_API_URL = "https://api.github.com"
 # ============================================
 # 📱 WhatsApp Settings
 # ============================================
-WHATSAPP_NUMBER = "201115410288"
+WHATSAPP_NUMBER = "201012345678"
 WHATSAPP_MESSAGE = "مرحبا، عايز أستفسر عن منتجات La Mariposa Store"
 
 
@@ -212,6 +212,37 @@ def save_to_github(data, sha=None):
         return False
 
 
+def initialize_github_storage():
+    """
+    لو products.json مش موجود على GitHub:
+    - يستخدم النسخة المحلية لو موجودة.
+    - أو ينشئ ملف جديد فارغ.
+    """
+
+    if not github_enabled():
+        return
+
+    github_data, github_sha = get_github_file()
+
+    # الملف موجود بالفعل
+    if github_data is not None:
+        return
+
+    DATA_DIR.mkdir(exist_ok=True)
+    ASSETS_DIR.mkdir(exist_ok=True)
+
+    # لو فيه نسخة محلية موجودة، نحاول استخدامها
+    if DATA_FILE.exists():
+        try:
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                local_data = json.load(f)
+        except Exception:
+            local_data = {cat: [] for cat in CATEGORIES.keys()}
+    else:
+        local_data = {cat: [] for cat in CATEGORIES.keys()}
+
+    save_to_github(local_data)
+
 
 # ============================================
 # Database / Products
@@ -243,55 +274,106 @@ def init_db():
             )
 
 
+@st.cache_data(ttl=30)
 def load_products():
-    """قراءة المنتجات — من GitHub لو متاح، وإلا محلياً"""
+    """
+    تحميل المنتجات.
 
-    # 1) جرب GitHub
+    لو GitHub متاح:
+        يقرأ من GitHub.
+
+    لو GitHub غير متاح:
+        يستخدم الملف المحلي.
+    """
+
+    init_db()
+
+    # ========================================
+    # GitHub
+    # ========================================
     if github_enabled():
+
         github_data, sha = get_github_file()
+
         if github_data is not None:
+
+            # نحفظ نسخة محلية مؤقتة أيضًا
+            try:
+                with open(DATA_FILE, "w", encoding="utf-8") as f:
+                    json.dump(
+                        github_data,
+                        f,
+                        ensure_ascii=False,
+                        indent=2
+                    )
+            except Exception:
+                pass
+
             return github_data
 
-    # 2) fallback: محلي
-    if DATA_FILE.exists():
-        try:
-            with open(DATA_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
+    # ========================================
+    # Local fallback
+    # ========================================
+    try:
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
 
-    # 3) ملف جديد فاضي
-    return {cat: [] for cat in CATEGORIES.keys()}
+    except Exception:
+        return {cat: [] for cat in CATEGORIES.keys()}
 
 
 def save_products(data):
-    """حفظ المنتجات في GitHub + نسخة محلية"""
+    """
+    حفظ المنتجات.
 
-    # 1) احفظ محلياً
+    GitHub هو التخزين الأساسي.
+    Local مجرد نسخة احتياطية.
+    """
+
+    # ========================================
+    # حفظ نسخة محلية
+    # ========================================
+    DATA_DIR.mkdir(exist_ok=True)
+
     try:
-        DATA_DIR.mkdir(exist_ok=True)
         with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            json.dump(
+                data,
+                f,
+                ensure_ascii=False,
+                indent=2
+            )
     except Exception as e:
         st.error(f"Local save error: {e}")
 
-    # 2) ارفع على GitHub
+    # ========================================
+    # GitHub
+    # ========================================
     if github_enabled():
-        # جيب أحدث SHA (مهم جداً)
-        _, sha = get_github_file()
 
-        # لو الملف مش موجود على GitHub، نرفعه جديد
-        success = save_to_github(data, sha=sha)
+        # نجيب أحدث SHA
+        current_data, sha = get_github_file()
 
-        if not success:
-            return False
+        success = save_to_github(
+            data,
+            sha=sha
+        )
 
-        print(f"✅ Saved to GitHub successfully")
-        return True
+        if success:
+            # نمسح Cache عشان البيانات الجديدة تظهر فورًا
+            load_products.clear()
+            return True
 
-except Exception as e:
-    st.error(f"GitHub connection error: {e}")
-    return False
+        return False
+
+    # لو GitHub مش متفعل
+    load_products.clear()
+    return True
+
+
+def get_products(category):
+    return load_products().get(category, [])
+
 
 def add_product(category, product):
     data = load_products()
