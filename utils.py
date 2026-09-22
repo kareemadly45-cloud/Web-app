@@ -5,6 +5,9 @@ import requests
 import streamlit as st
 from pathlib import Path
 
+import cloudinary
+import cloudinary.uploader
+
 
 DATA_DIR = Path("data")
 DATA_FILE = DATA_DIR / "products.json"
@@ -167,34 +170,48 @@ def delete_product(category, product_id):
     data = load_products()
     data[category] = [p for p in data.get(category, []) if p["id"] != product_id]
     return save_products(data)
-
+    
+def get_cloudinary_config():
+    """إعداد Cloudinary من الـ Secrets"""
+    try:
+        cloudinary.config(
+            cloud_name=st.secrets["CLOUDINARY_CLOUD_NAME"],
+            api_key=st.secrets["CLOUDINARY_API_KEY"],
+            api_secret=st.secrets["CLOUDINARY_API_SECRET"],
+            secure=True
+        )
+        return True
+    except Exception:
+        return False
 
 def save_uploaded_image(uploaded_file, product_id=None):
+    """يرفع الصورة على Cloudinary أو Base64 كـ fallback"""
     if uploaded_file is None:
         return ""
+
+    # 1) جرب Cloudinary الأول
+    if get_cloudinary_config():
+        try:
+            response = cloudinary.uploader.upload(
+                uploaded_file,
+                folder="lamariposa_products",
+                quality="auto:good",
+                fetch_format="auto"
+            )
+            url = response.get("secure_url", "")
+            if url:
+                return url
+        except Exception:
+            pass
+
+    # 2) Fallback: Base64
     try:
         data = uploaded_file.getvalue()
         ext = uploaded_file.name.split(".")[-1].lower() if "." in uploaded_file.name else "png"
-        if len(data) > 100 * 1024:
-            try:
-                from PIL import Image
-                import io
-                img = Image.open(io.BytesIO(data))
-                if img.mode in ("RGBA", "P"):
-                    img = img.convert("RGB")
-                if img.width > 700 or img.height > 700:
-                    img.thumbnail((700, 700), Image.LANCZOS)
-                output = io.BytesIO()
-                img.save(output, "JPEG", quality=65, optimize=True)
-                data = output.getvalue()
-                ext = "jpeg"
-            except Exception:
-                if ext == "jpg":
-                    ext = "jpeg"
-        else:
-            if ext == "jpg":
-                ext = "jpeg"
-        return f"data:image/{ext};base64,{base64.b64encode(data).decode()}"
+        if ext == "jpg":
+            ext = "jpeg"
+        encoded = base64.b64encode(data).decode()
+        return f"data:image/{ext};base64,{encoded}"
     except Exception:
         return ""
 
