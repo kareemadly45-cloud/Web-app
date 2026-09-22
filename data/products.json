@@ -11,7 +11,16 @@
       ]
     }
   ],
-  "luxury": [],
+  "luxury": [
+    {
+      "id": "e6e6d303-1fda-4e4c-b5ad-c01494091690",
+      "name": "Bag",
+      "description": "Bag",
+      "price": 100.0,
+      "price_after": 0,
+      "images": []
+    }
+  ],
   "soree": [],
   "discount": []
 }
