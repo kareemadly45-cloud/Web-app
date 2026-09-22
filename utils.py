@@ -6,10 +6,16 @@ import streamlit as st
 from pathlib import Path
 
 
+# ============================================
+# Paths
+# ============================================
 DATA_DIR = Path("data")
 DATA_FILE = DATA_DIR / "products.json"
 ASSETS_DIR = Path("assets")
 
+# ============================================
+# GitHub Persistent Storage
+# ============================================
 try:
     GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
     GITHUB_REPO = st.secrets["GITHUB_REPO"]
@@ -20,29 +26,66 @@ except Exception:
     GITHUB_BRANCH = "main"
 
 GITHUB_FILE_PATH = "data/products.json"
+
 GITHUB_API_URL = "https://api.github.com"
 
-WHATSAPP_NUMBER = "201012345688"
+
+# ============================================
+# 📱 WhatsApp Settings
+# ============================================
+WHATSAPP_NUMBER = "201012345678"
 WHATSAPP_MESSAGE = "مرحبا، عايز أستفسر عن منتجات La Mariposa Store"
 
+
+# ============================================
+# 🔐 Admin Password
+# ============================================
 try:
     ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
 except Exception:
     ADMIN_PASSWORD = "admin123"
 
+
+# ============================================
+# Categories
+# ============================================
 CATEGORIES = {
-    "home": {"name": "Home", "icon": "🏠", "page": "1_Home", "color": "#FF6B6B",
-             "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop"},
-    "luxury": {"name": "Luxury", "icon": "💎", "page": "2_Luxury", "color": "#9B59B6",
-               "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300&h=300&fit=crop"},
-    "soree": {"name": "Soree", "icon": "🛍️", "page": "3_Soree", "color": "#3498DB",
-              "image": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=300&h=300&fit=crop"},
-    "discount": {"name": "Discount", "icon": "🔥", "page": "4_Discount", "color": "#E74C3C",
-                 "image": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=300&h=300&fit=crop"},
+    "home": {
+        "name": "Home",
+        "icon": "🏠",
+        "page": "1_Home",
+        "color": "#FF6B6B",
+        "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop",
+    },
+    "luxury": {
+        "name": "Luxury",
+        "icon": "💎",
+        "page": "2_Luxury",
+        "color": "#9B59B6",
+        "image": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300&h=300&fit=crop",
+    },
+    "soree": {
+        "name": "Soree",
+        "icon": "🛍️",
+        "page": "3_Soree",
+        "color": "#3498DB",
+        "image": "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=300&h=300&fit=crop",
+    },
+    "discount": {
+        "name": "Discount",
+        "icon": "🔥",
+        "page": "4_Discount",
+        "color": "#E74C3C",
+        "image": "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=300&h=300&fit=crop",
+    },
 }
 
 
+# ============================================
+# GitHub Helpers
+# ============================================
 def github_enabled():
+    """يتأكد إن إعدادات GitHub موجودة."""
     return bool(GITHUB_TOKEN and GITHUB_REPO)
 
 
@@ -55,94 +98,276 @@ def github_headers():
 
 
 def get_github_file():
-    """يقرأ products.json من GitHub (بدون st.error)"""
+    """
+    يجيب products.json من GitHub.
+    يرجع:
+        data, sha
+    أو:
+        None, None
+    """
+
     if not github_enabled():
         return None, None
+
+    url = (
+        f"{GITHUB_API_URL}/repos/"
+        f"{GITHUB_REPO}/contents/"
+        f"{GITHUB_FILE_PATH}"
+    )
+
+    params = {
+        "ref": GITHUB_BRANCH
+    }
+
     try:
-        api_url = f"{GITHUB_API_URL}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
-        r = requests.get(api_url, headers=github_headers(), params={"ref": GITHUB_BRANCH}, timeout=15)
-        if r.status_code != 200:
+        response = requests.get(
+            url,
+            headers=github_headers(),
+            params=params,
+            timeout=15
+        )
+
+        if response.status_code == 404:
             return None, None
-        meta = r.json()
-        sha = meta.get("sha")
-        content = meta.get("content", "")
-        download_url = meta.get("download_url")
-        decoded = ""
-        if content:
-            try:
-                decoded = base64.b64decode(content.replace("\n", "")).decode("utf-8").strip()
-            except Exception:
-                decoded = ""
-        elif download_url:
-            try:
-                raw = requests.get(download_url, timeout=30)
-                if raw.status_code == 200:
-                    decoded = raw.text.strip()
-            except Exception:
-                decoded = ""
-        if not decoded:
-            return None, sha
-        try:
-            return json.loads(decoded), sha
-        except Exception:
-            return None, sha
-    except Exception:
+
+        response.raise_for_status()
+
+        result = response.json()
+
+        encoded_content = result.get("content", "")
+        sha = result.get("sha")
+
+        # GitHub ممكن يرجع المحتوى مع newline
+        encoded_content = encoded_content.replace("\n", "")
+
+        decoded = base64.b64decode(encoded_content).decode("utf-8")
+        data = json.loads(decoded)
+
+        return data, sha
+
+    except Exception as e:
+        st.error(f"GitHub read error: {e}")
         return None, None
 
 
 def save_to_github(data, sha=None):
-    """يحفظ products.json على GitHub (بدون st.error)"""
+    """
+    يحفظ products.json على GitHub.
+    """
+
     if not github_enabled():
+        st.error(
+            "GitHub storage is not configured. "
+            "Please add GITHUB_TOKEN and GITHUB_REPO to Streamlit Secrets."
+        )
         return False
+
+    url = (
+        f"{GITHUB_API_URL}/repos/"
+        f"{GITHUB_REPO}/contents/"
+        f"{GITHUB_FILE_PATH}"
+    )
+
+    json_content = json.dumps(
+        data,
+        ensure_ascii=False,
+        indent=2
+    )
+
+    encoded_content = base64.b64encode(
+        json_content.encode("utf-8")
+    ).decode("utf-8")
+
+    payload = {
+        "message": "Update products",
+        "content": encoded_content,
+        "branch": GITHUB_BRANCH,
+    }
+
+    # لو الملف موجود لازم نبعت SHA
+    if sha:
+        payload["sha"] = sha
+
     try:
-        url = f"{GITHUB_API_URL}/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
-        json_content = json.dumps(data, ensure_ascii=False, indent=2)
-        encoded = base64.b64encode(json_content.encode("utf-8")).decode("utf-8")
-        payload = {"message": "Update products", "content": encoded, "branch": GITHUB_BRANCH}
-        if sha:
-            payload["sha"] = sha
-        r = requests.put(url, headers=github_headers(), json=payload, timeout=30)
-        return r.status_code in [200, 201]
-    except Exception:
+        response = requests.put(
+            url,
+            headers=github_headers(),
+            json=payload,
+            timeout=30
+        )
+
+        if response.status_code not in [200, 201]:
+            try:
+                error_message = response.json().get("message", response.text)
+            except Exception:
+                error_message = response.text
+
+            st.error(f"GitHub save error: {error_message}")
+            return False
+
+        return True
+
+    except Exception as e:
+        st.error(f"GitHub connection error: {e}")
         return False
 
 
-def init_db():
+def initialize_github_storage():
+    """
+    لو products.json مش موجود على GitHub:
+    - يستخدم النسخة المحلية لو موجودة.
+    - أو ينشئ ملف جديد فارغ.
+    """
+
+    if not github_enabled():
+        return
+
+    github_data, github_sha = get_github_file()
+
+    # الملف موجود بالفعل
+    if github_data is not None:
+        return
+
     DATA_DIR.mkdir(exist_ok=True)
     ASSETS_DIR.mkdir(exist_ok=True)
+
+    # لو فيه نسخة محلية موجودة، نحاول استخدامها
+    if DATA_FILE.exists():
+        try:
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                local_data = json.load(f)
+        except Exception:
+            local_data = {cat: [] for cat in CATEGORIES.keys()}
+    else:
+        local_data = {cat: [] for cat in CATEGORIES.keys()}
+
+    save_to_github(local_data)
+
+
+# ============================================
+# Database / Products
+# ============================================
+def init_db():
+    """
+    تجهيز التخزين.
+
+    الأولوية:
+    GitHub
+    ثم Local fallback
+    """
+
+    DATA_DIR.mkdir(exist_ok=True)
+    ASSETS_DIR.mkdir(exist_ok=True)
+
+    if github_enabled():
+        initialize_github_storage()
+
     if not DATA_FILE.exists():
         default_data = {cat: [] for cat in CATEGORIES.keys()}
+
         with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(default_data, f, ensure_ascii=False, indent=2)
+            json.dump(
+                default_data,
+                f,
+                ensure_ascii=False,
+                indent=2
+            )
 
 
+@st.cache_data(ttl=30)
 def load_products():
+    """
+    تحميل المنتجات.
+
+    لو GitHub متاح:
+        يقرأ من GitHub.
+
+    لو GitHub غير متاح:
+        يستخدم الملف المحلي.
+    """
+
     init_db()
+
+    # ========================================
+    # GitHub
+    # ========================================
     if github_enabled():
-        github_data, _ = get_github_file()
+
+        github_data, sha = get_github_file()
+
         if github_data is not None:
+
+            # نحفظ نسخة محلية مؤقتة أيضًا
             try:
                 with open(DATA_FILE, "w", encoding="utf-8") as f:
-                    json.dump(github_data, f, ensure_ascii=False, indent=2)
+                    json.dump(
+                        github_data,
+                        f,
+                        ensure_ascii=False,
+                        indent=2
+                    )
             except Exception:
                 pass
+
             return github_data
+
+    # ========================================
+    # Local fallback
+    # ========================================
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
+
     except Exception:
         return {cat: [] for cat in CATEGORIES.keys()}
 
 
 def save_products(data):
+    """
+    حفظ المنتجات.
+
+    GitHub هو التخزين الأساسي.
+    Local مجرد نسخة احتياطية.
+    """
+
+    # ========================================
+    # حفظ نسخة محلية
+    # ========================================
+    DATA_DIR.mkdir(exist_ok=True)
+
     try:
         with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-    except Exception:
-        pass
+            json.dump(
+                data,
+                f,
+                ensure_ascii=False,
+                indent=2
+            )
+    except Exception as e:
+        st.error(f"Local save error: {e}")
+
+    # ========================================
+    # GitHub
+    # ========================================
     if github_enabled():
-        _, sha = get_github_file()
-        return save_to_github(data, sha=sha)
+
+        # نجيب أحدث SHA
+        current_data, sha = get_github_file()
+
+        success = save_to_github(
+            data,
+            sha=sha
+        )
+
+        if success:
+            # نمسح Cache عشان البيانات الجديدة تظهر فورًا
+            load_products.clear()
+            return True
+
+        return False
+
+    # لو GitHub مش متفعل
+    load_products.clear()
     return True
 
 
@@ -152,64 +377,90 @@ def get_products(category):
 
 def add_product(category, product):
     data = load_products()
+
     data.setdefault(category, []).append(product)
+
     return save_products(data)
 
 
 def update_product(category, product_id, updated):
     data = load_products()
+
     for i, p in enumerate(data.get(category, [])):
         if p["id"] == product_id:
             data[category][i] = updated
             break
+
     return save_products(data)
 
 
 def delete_product(category, product_id):
     data = load_products()
-    data[category] = [p for p in data.get(category, []) if p["id"] != product_id]
+
+    data[category] = [
+        p
+        for p in data.get(category, [])
+        if p["id"] != product_id
+    ]
+
     return save_products(data)
 
 
+# ============================================
+# 📸 Image Upload
+# ============================================
 def save_uploaded_image(uploaded_file, product_id=None):
+    """
+    يحول الصورة إلى Base64.
+    لا يحتاج إلى حفظ ملف منفصل.
+    """
+
     if uploaded_file is None:
         return ""
+
     try:
         data = uploaded_file.getvalue()
-        ext = uploaded_file.name.split(".")[-1].lower() if "." in uploaded_file.name else "png"
-        if len(data) > 100 * 1024:
-            try:
-                from PIL import Image
-                import io
-                img = Image.open(io.BytesIO(data))
-                if img.mode in ("RGBA", "P"):
-                    img = img.convert("RGB")
-                if img.width > 700 or img.height > 700:
-                    img.thumbnail((700, 700), Image.LANCZOS)
-                output = io.BytesIO()
-                img.save(output, "JPEG", quality=65, optimize=True)
-                data = output.getvalue()
-                ext = "jpeg"
-            except Exception:
-                if ext == "jpg":
-                    ext = "jpeg"
-        else:
-            if ext == "jpg":
-                ext = "jpeg"
-        return f"data:image/{ext};base64,{base64.b64encode(data).decode()}"
-    except Exception:
+
+        ext = (
+            uploaded_file.name.split(".")[-1].lower()
+            if "." in uploaded_file.name
+            else "png"
+        )
+
+        if ext == "jpg":
+            ext = "jpeg"
+
+        encoded = base64.b64encode(data).decode()
+
+        return f"data:image/{ext};base64,{encoded}"
+
+    except Exception as e:
+        st.error(f"Error processing image: {e}")
         return ""
 
 
 def get_product_images(product):
+    """
+    يرجع قائمة صور المنتج.
+    يدعم:
+    images
+    image
+    """
+
     images = product.get("images", [])
+
     if not isinstance(images, list):
         images = []
+
     if not images and product.get("image"):
         images = [product["image"]]
+
     return images
 
 
+# ============================================
+# 🛒 Cart Functions
+# ============================================
 def init_cart():
     if "cart" not in st.session_state:
         st.session_state.cart = []
@@ -217,11 +468,18 @@ def init_cart():
 
 def add_to_cart(product, category):
     init_cart()
-    st.session_state.cart.append({**product, "category": category})
+
+    st.session_state.cart.append(
+        {
+            **product,
+            "category": category
+        }
+    )
 
 
 def remove_from_cart(index):
     init_cart()
+
     if 0 <= index < len(st.session_state.cart):
         st.session_state.cart.pop(index)
 
@@ -238,10 +496,18 @@ def get_cart_items():
 
 def get_cart_total():
     init_cart()
+
     total = 0
+
     for item in st.session_state.cart:
-        price = item.get("price_after") or item.get("price", 0)
+
+        price = (
+            item.get("price_after")
+            or item.get("price", 0)
+        )
+
         total += price
+
     return total
 
 
@@ -249,6 +515,9 @@ def clear_cart():
     st.session_state.cart = []
 
 
+# ============================================
+# Admin Session
+# ============================================
 def is_admin():
     return st.session_state.get("is_admin", False)
 
@@ -257,6 +526,7 @@ def login_admin(password):
     if password == ADMIN_PASSWORD:
         st.session_state.is_admin = True
         return True
+
     return False
 
 
@@ -264,91 +534,263 @@ def logout_admin():
     st.session_state.is_admin = False
 
 
+# ============================================
+# Helpers
+# ============================================
 def calc_discount(price_before, price_after):
-    if price_before and price_after and price_before > price_after:
-        return int(((price_before - price_after) / price_before) * 100)
+
+    if (
+        price_before
+        and price_after
+        and price_before > price_after
+    ):
+        return int(
+            ((price_before - price_after) / price_before)
+            * 100
+        )
+
     return 0
 
 
 def get_whatsapp_link(product=None):
+
     msg = WHATSAPP_MESSAGE
+
     if product:
-        msg = f"مرحبا، عايز أستفسر عن: {product['name']}"
+
+        msg = (
+            f"مرحبا، عايز أستفسر عن: "
+            f"{product['name']}"
+        )
+
         price = product.get("price", 0)
         price_after = product.get("price_after", 0)
+
         if price_after and price_after < price:
-            msg += f" (السعر: {price_after:.0f} EGP بدل {price:.0f} EGP)"
+
+            msg += (
+                f" (السعر: {price_after:.0f} EGP "
+                f"بدل {price:.0f} EGP)"
+            )
+
         else:
-            msg += f" (السعر: {price:.0f} EGP)"
-    msg_encoded = msg.replace(" ", "%20").replace("\n", "%0A")
-    return f"https://wa.me/{WHATSAPP_NUMBER}?text={msg_encoded}"
+
+            msg += (
+                f" (السعر: {price:.0f} EGP)"
+            )
+
+    msg_encoded = (
+        msg
+        .replace(" ", "%20")
+        .replace("\n", "%0A")
+    )
+
+    return (
+        f"https://wa.me/"
+        f"{WHATSAPP_NUMBER}"
+        f"?text={msg_encoded}"
+    )
 
 
+# ============================================
+# Streamlit UI
+# ============================================
 def hide_streamlit_ui():
-    st.markdown("""
-<style>
-    header[data-testid="stHeader"] { display: none !important; }
-    [data-testid="stToolbar"] { display: none !important; }
-    [data-testid="stToolbarActions"] { display: none !important; }
-    .stDeployButton { display: none !important; }
-    [data-testid="stAppDeployButton"] { display: none !important; }
-    [data-testid="stStatusWidget"] { display: none !important; }
-    #MainMenu { visibility: hidden !important; }
-    footer { visibility: hidden !important; }
-    [data-testid="stDecoration"] { display: none !important; }
-    [data-testid="manage-app-button"] { display: none !important; }
 
-    /* إخفاء رسائل الأخطاء */
-    div[data-testid="stAlert"],
-    div[data-baseweb="notification"],
-    div.stAlert,
-    .stException,
-    div[data-testid="stException"],
-    div[role="alert"] {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <style>
+            header[data-testid="stHeader"] {
+                display: none !important;
+            }
+
+            [data-testid="stToolbar"] {
+                display: none !important;
+            }
+
+            [data-testid="stToolbarActions"] {
+                display: none !important;
+            }
+
+            .stDeployButton {
+                display: none !important;
+            }
+
+            [data-testid="stAppDeployButton"] {
+                display: none !important;
+            }
+
+            [data-testid="stStatusWidget"] {
+                display: none !important;
+            }
+
+            #MainMenu {
+                visibility: hidden !important;
+            }
+
+            footer {
+                visibility: hidden !important;
+            }
+
+            [data-testid="stDecoration"] {
+                display: none !important;
+            }
+
+            [data-testid="manage-app-button"] {
+                display: none !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 
+# ============================================
+# Product Card
+# ============================================
 def render_product_card(product):
+
     price = product.get("price", 0)
     price_after = product.get("price_after", 0)
-    has_discount = price_after and price_after < price
-    discount = calc_discount(price, price_after) if has_discount else 0
+
+    has_discount = (
+        price_after
+        and price_after < price
+    )
+
+    discount = (
+        calc_discount(price, price_after)
+        if has_discount
+        else 0
+    )
 
     images = get_product_images(product)
+
     img_src = images[0] if images else ""
 
     if img_src:
-        img_html = '<img src="' + img_src + '" style="width:100%;height:240px;object-fit:cover;border-radius:12px;">'
+
+        img_html = (
+            '<img src="'
+            + img_src
+            + '" style="width:100%;'
+            + 'height:240px;'
+            + 'object-fit:cover;'
+            + 'border-radius:12px;">'
+        )
+
     else:
-        img_html = '<div style="width:100%;height:240px;background:#2a2a2a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#666;">No Image</div>'
+
+        img_html = (
+            '<div style="width:100%;'
+            + 'height:240px;'
+            + 'background:#2a2a2a;'
+            + 'border-radius:12px;'
+            + 'display:flex;'
+            + 'align-items:center;'
+            + 'justify-content:center;'
+            + 'color:#666;">'
+            + 'No Image'
+            + '</div>'
+        )
 
     badge = ""
-    if has_discount:
-        badge = '<span style="background:linear-gradient(135deg,#800020,#B22234);color:white;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:bold;">-' + str(discount) + '%</span>'
 
     if has_discount:
-        price_html = '<span style="text-decoration:line-through;color:#666;font-size:15px;">' + str(int(price)) + ' EGP</span> <span style="color:#800020;font-weight:bold;font-size:22px;margin-left:8px;">' + str(int(price_after)) + ' EGP</span>'
+
+        badge = (
+            '<span style="'
+            'background:linear-gradient(135deg,#800020,#B22234);'
+            'color:white;'
+            'padding:5px 14px;'
+            'border-radius:20px;'
+            'font-size:13px;'
+            'font-weight:bold;">'
+            + "-"
+            + str(discount)
+            + "%"
+            + "</span>"
+        )
+
+    if has_discount:
+
+        price_html = (
+            '<span style="'
+            'text-decoration:line-through;'
+            'color:#666;'
+            'font-size:15px;">'
+            + str(int(price))
+            + " EGP"
+            + "</span> "
+
+            '<span style="'
+            'color:#800020;'
+            'font-weight:bold;'
+            'font-size:22px;'
+            'margin-left:8px;">'
+            + str(int(price_after))
+            + " EGP"
+            + "</span>"
+        )
+
     else:
-        price_html = '<span style="color:#F39C12;font-weight:bold;font-size:22px;">' + str(int(price)) + ' EGP</span>'
+
+        price_html = (
+            '<span style="'
+            'color:#F39C12;'
+            'font-weight:bold;'
+            'font-size:22px;">'
+            + str(int(price))
+            + " EGP"
+            + "</span>"
+        )
 
     name = product.get("name", "")
     desc = product.get("description", "")
 
     html = (
-        '<div style="border:2px solid #800020;border-radius:15px;padding:14px;background:#1a1a1a;margin-bottom:10px;box-shadow:0 4px 15px rgba(128,0,32,0.3);">'
-        + img_html +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">'
-        '<div style="font-weight:700;font-size:17px;color:#ffffff;">' + name + '</div>'
-        + badge + '</div>'
-        '<div style="margin-top:10px;">' + price_html + '</div>'
-        '<div style="color:#999;font-size:14px;margin-top:6px;">' + desc + '</div>'
-        '</div>'
+        '<div style="'
+        'border:2px solid #800020;'
+        'border-radius:15px;'
+        'padding:14px;'
+        'background:#1a1a1a;'
+        'margin-bottom:10px;'
+        'box-shadow:0 4px 15px rgba(128,0,32,0.3);">'
+
+        + img_html
+
+        + '<div style="'
+        'display:flex;'
+        'justify-content:space-between;'
+        'align-items:center;'
+        'margin-top:12px;">'
+
+        '<div style="'
+        'font-weight:700;'
+        'font-size:17px;'
+        'color:#ffffff;">'
+        + name
+        + "</div>"
+
+        + badge
+
+        + "</div>"
+
+        '<div style="margin-top:10px;">'
+        + price_html
+        + "</div>"
+
+        '<div style="'
+        'color:#999;'
+        'font-size:14px;'
+        'margin-top:6px;">'
+        + desc
+        + "</div>"
+
+        + "</div>"
     )
-    st.markdown(html, unsafe_allow_html=True)
+
+    st.markdown(
+        html,
+        unsafe_allow_html=True
+    )
