@@ -36,7 +36,9 @@
       "description": "Bag",
       "price": 300.0,
       "price_after": 0,
-      "images": []
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790093521/lamariposa_products/v7cimuqrxlihooop8lan.jpg"
+      ]
     }
   ],
   "luxury": [
