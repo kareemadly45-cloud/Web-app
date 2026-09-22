@@ -145,9 +145,10 @@ def get_github_file():
 
         return data, sha
 
-    except Exception as e:
-        st.error(f"GitHub read error: {e}")
-        return None, None
+    except Exception:
+    # مخفي - الـ error بيتسجل في اللوجات فقط
+    print("[GitHub] Read error occurred")
+    return None, None
 
 
 def save_to_github(data, sha=None):
@@ -197,20 +198,18 @@ def save_to_github(data, sha=None):
         )
 
         if response.status_code not in [200, 201]:
-            try:
-                error_message = response.json().get("message", response.text)
-            except Exception:
-                error_message = response.text
-
-            st.error(f"GitHub save error: {error_message}")
-            return False
+    try:
+        error_message = response.json().get("message", response.text)
+    except Exception:
+        error_message = response.text
+    print(f"[GitHub] Save error: {error_message}")
+    return False
 
         return True
 
     except Exception as e:
-        st.error(f"GitHub connection error: {e}")
-        return False
-
+    print(f"[GitHub] Connection error: {e}")
+    return False
 
 def initialize_github_storage():
     """
