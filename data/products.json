@@ -1,5 +1,14 @@
 {
-  "home": [],
+  "home": [
+    {
+      "id": "3049178a-feec-47ba-a57a-cd1408369786",
+      "name": "Bag",
+      "description": "Bag",
+      "price": 500.0,
+      "price_after": 0,
+      "images": []
+    }
+  ],
   "luxury": [
     {
       "id": "1f36167f-3716-4bcf-b649-1f365f7e5d7e",
