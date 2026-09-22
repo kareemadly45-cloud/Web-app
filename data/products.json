@@ -49,6 +49,17 @@
       "images": [
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790102236/lamariposa_products/o9bsrqdvhwy0tjek94xr.jpg"
       ]
+    },
+    {
+      "id": "e034158d-11d5-4f03-a782-61a9bafdf636",
+      "name": "Luxury bags",
+      "description": "Luxury bags",
+      "price": 600.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790108956/lamariposa_products/va5hyse209ovplep8rhh.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790108957/lamariposa_products/azdhwk7qovvjvozsinfc.jpg"
+      ]
     }
   ],
   "luxury": [
