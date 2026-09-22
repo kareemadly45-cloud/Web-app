@@ -33,7 +33,7 @@ GITHUB_API_URL = "https://api.github.com"
 # ============================================
 # 📱 WhatsApp Settings
 # ============================================
-WHATSAPP_NUMBER = "201012345678"
+WHATSAPP_NUMBER = "201115410288"
 WHATSAPP_MESSAGE = "مرحبا، عايز أستفسر عن منتجات La Mariposa Store"
 
 
