@@ -287,6 +287,9 @@ def get_whatsapp_link(product=None):
 def hide_streamlit_ui():
     st.markdown("""
 <style>
+    /* ============================================
+       إخفاء عناصر Streamlit الافتراضية
+       ============================================ */
     header[data-testid="stHeader"] { display: none !important; }
     [data-testid="stToolbar"] { display: none !important; }
     [data-testid="stToolbarActions"] { display: none !important; }
@@ -297,9 +300,24 @@ def hide_streamlit_ui():
     footer { visibility: hidden !important; }
     [data-testid="stDecoration"] { display: none !important; }
     [data-testid="manage-app-button"] { display: none !important; }
+
+    /* ============================================
+       إخفاء رسائل الأخطاء
+       ============================================ */
+    div[data-testid="stAlert"],
+    div[data-baseweb="notification"],
+    div.stAlert,
+    .stException,
+    div[data-testid="stException"],
+    div[role="alert"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
-
 
 def render_product_card(product):
     price = product.get("price", 0)
