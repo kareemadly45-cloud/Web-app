@@ -350,3 +350,8 @@ def render_product_card(product):
         '</div>'
     )
     st.markdown(html, unsafe_allow_html=True)
+
+st.error(f"GitHub read error: {e}")
+st.error(f"GitHub save error: {error_message}")
+st.error(f"GitHub connection error: {e}")
+st.error(f"Error processing image: {e}")
