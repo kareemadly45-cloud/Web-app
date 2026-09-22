@@ -1,7 +1,7 @@
 import streamlit as st
 from utils import (
     CATEGORIES, init_db, get_whatsapp_link,
-    is_admin, login_admin, logout_admin
+    is_admin, login_admin, logout_admin ,hide_streamlit_ui 
 )
 
 # ============================================
@@ -248,7 +248,24 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
+# إخفاء رسائل الأخطاء
+st.markdown("""
+<style>
+    /* إخفاء كل أنواع الأخطاء والتنبيهات */
+    div[data-testid="stAlert"],
+    div[data-baseweb="notification"],
+    div.stAlert,
+    .stException,
+    div[data-testid="stException"],
+    div[role="alert"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 # ============================================
 # 🔐 لو المستخدم داخل على الرابط السري
 # ============================================
