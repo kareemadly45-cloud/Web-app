@@ -55,7 +55,6 @@ def github_headers():
 
 
 def get_github_file():
-    """يقرأ products.json من GitHub (بدون st.error)"""
     if not github_enabled():
         return None, None
     try:
@@ -91,7 +90,6 @@ def get_github_file():
 
 
 def save_to_github(data, sha=None):
-    """يحفظ products.json على GitHub (بدون st.error)"""
     if not github_enabled():
         return False
     try:
@@ -287,18 +285,102 @@ def get_whatsapp_link(product=None):
 def hide_streamlit_ui():
     st.markdown("""
 <style>
-    header[data-testid="stHeader"] { display: none !important; }
-    [data-testid="stToolbar"] { display: none !important; }
-    [data-testid="stToolbarActions"] { display: none !important; }
-    .stDeployButton { display: none !important; }
-    [data-testid="stAppDeployButton"] { display: none !important; }
-    [data-testid="stStatusWidget"] { display: none !important; }
-    #MainMenu { visibility: hidden !important; }
-    footer { visibility: hidden !important; }
-    [data-testid="stDecoration"] { display: none !important; }
-    [data-testid="manage-app-button"] { display: none !important; }
+    /* ============================================
+       إخفاء كل عناصر Streamlit العلوية
+       ============================================ */
 
-    /* إخفاء رسائل الأخطاء */
+    /* إخفاء الـ Header بالكامل */
+    header[data-testid="stHeader"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* إخفاء الـ Toolbar */
+    [data-testid="stToolbar"],
+    [data-testid="stToolbarActions"],
+    [data-testid="stStatusWidget"],
+    .stAppToolbar,
+    .stToolbar {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+    }
+
+    /* إخفاء كل الأزرار في الـ Header */
+    header button,
+    [data-testid="stHeader"] button,
+    .stApp > header button {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* إخفاء زر Deploy */
+    .stDeployButton,
+    [data-testid="stAppDeployButton"],
+    [data-testid="stDeployButton"] {
+        display: none !important;
+    }
+
+    /* إخفاء القايمة الرئيسية */
+    #MainMenu {
+        visibility: hidden !important;
+        display: none !important;
+    }
+
+    /* إخفاء الفوتر */
+    footer {
+        visibility: hidden !important;
+        display: none !important;
+    }
+
+    /* إخفاء Decoration */
+    [data-testid="stDecoration"] {
+        display: none !important;
+    }
+
+    /* إخفاء Manage app button */
+    [data-testid="manage-app-button"] {
+        display: none !important;
+    }
+
+    /* ============================================
+       إخفاء زر Fork والـ GitHub (محدد)
+       ============================================ */
+
+    /* إخفاء أي زر فيه كلمة Fork */
+    [data-testid="stToolbar"] button,
+    [data-testid="stToolbarActions"] button,
+    .stApp > header button,
+    button[kind="header"],
+    button[kind="headerNoPadding"],
+    [data-testid="stBaseButton-header"],
+    [data-testid="stBaseButton-headerNoPadding"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* إخفاء الروابط في الـ header */
+    header a,
+    [data-testid="stHeader"] a,
+    .stApp > header a {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* إخفاء الـ container بتاع الـ Toolbar */
+    .stApp > header > div,
+    header > div {
+        display: none !important;
+    }
+
+    /* ============================================
+       إخفاء رسائل الأخطاء
+       ============================================ */
     div[data-testid="stAlert"],
     div[data-baseweb="notification"],
     div.stAlert,
