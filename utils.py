@@ -55,7 +55,7 @@ def github_headers():
 
 
 def get_github_file():
-    """بدون أي st.error"""
+    """يقرأ products.json من GitHub (بدون st.error)"""
     if not github_enabled():
         return None, None
     try:
@@ -91,7 +91,7 @@ def get_github_file():
 
 
 def save_to_github(data, sha=None):
-    """بدون أي st.error"""
+    """يحفظ products.json على GitHub (بدون st.error)"""
     if not github_enabled():
         return False
     try:
@@ -287,9 +287,6 @@ def get_whatsapp_link(product=None):
 def hide_streamlit_ui():
     st.markdown("""
 <style>
-    /* ============================================
-       إخفاء عناصر Streamlit الافتراضية
-       ============================================ */
     header[data-testid="stHeader"] { display: none !important; }
     [data-testid="stToolbar"] { display: none !important; }
     [data-testid="stToolbarActions"] { display: none !important; }
@@ -301,9 +298,7 @@ def hide_streamlit_ui():
     [data-testid="stDecoration"] { display: none !important; }
     [data-testid="manage-app-button"] { display: none !important; }
 
-    /* ============================================
-       إخفاء رسائل الأخطاء
-       ============================================ */
+    /* إخفاء رسائل الأخطاء */
     div[data-testid="stAlert"],
     div[data-baseweb="notification"],
     div.stAlert,
@@ -319,26 +314,33 @@ def hide_streamlit_ui():
 </style>
 """, unsafe_allow_html=True)
 
+
 def render_product_card(product):
     price = product.get("price", 0)
     price_after = product.get("price_after", 0)
     has_discount = price_after and price_after < price
     discount = calc_discount(price, price_after) if has_discount else 0
+
     images = get_product_images(product)
     img_src = images[0] if images else ""
+
     if img_src:
         img_html = '<img src="' + img_src + '" style="width:100%;height:240px;object-fit:cover;border-radius:12px;">'
     else:
         img_html = '<div style="width:100%;height:240px;background:#2a2a2a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#666;">No Image</div>'
+
     badge = ""
     if has_discount:
         badge = '<span style="background:linear-gradient(135deg,#800020,#B22234);color:white;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:bold;">-' + str(discount) + '%</span>'
+
     if has_discount:
         price_html = '<span style="text-decoration:line-through;color:#666;font-size:15px;">' + str(int(price)) + ' EGP</span> <span style="color:#800020;font-weight:bold;font-size:22px;margin-left:8px;">' + str(int(price_after)) + ' EGP</span>'
     else:
         price_html = '<span style="color:#F39C12;font-weight:bold;font-size:22px;">' + str(int(price)) + ' EGP</span>'
+
     name = product.get("name", "")
     desc = product.get("description", "")
+
     html = (
         '<div style="border:2px solid #800020;border-radius:15px;padding:14px;background:#1a1a1a;margin-bottom:10px;box-shadow:0 4px 15px rgba(128,0,32,0.3);">'
         + img_html +
@@ -350,8 +352,3 @@ def render_product_card(product):
         '</div>'
     )
     st.markdown(html, unsafe_allow_html=True)
-
-st.error(f"GitHub read error: {e}")
-st.error(f"GitHub save error: {error_message}")
-st.error(f"GitHub connection error: {e}")
-st.error(f"Error processing image: {e}")
