@@ -64,6 +64,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185817/lamariposa_products/ziijap8zdpzzatz3fdyw.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185818/lamariposa_products/rnntt4rtbzptbvnxeegr.jpg"
       ]
+    },
+    {
+      "id": "0acb3aa5-1235-4852-a89f-4180c20c40e3",
+      "name": "Luxury that never goes out of style.",
+      "description": "Every stitch whispers sophistication.",
+      "price": 650.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186047/lamariposa_products/ftriv7jzenic22fopzpp.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186048/lamariposa_products/f8byxrfwdx3aeimbdld3.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186049/lamariposa_products/b56lmv6b5eghxjeixqmz.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186050/lamariposa_products/t8s1rqg64b7op30oy5cz.jpg"
+      ]
     }
   ],
   "soree": [
