@@ -25,7 +25,7 @@ except Exception:
 GITHUB_FILE_PATH = "data/products.json"
 GITHUB_API_URL = "https://api.github.com"
 
-WHATSAPP_NUMBER = "201012345688"
+WHATSAPP_NUMBER = "201210500346"
 WHATSAPP_MESSAGE = "مرحبا، عايز أستفسر عن منتجات La Mariposa Store"
 
 try:
