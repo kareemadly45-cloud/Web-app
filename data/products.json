@@ -1,6 +1,19 @@
 {
   "home": [],
-  "luxury": [],
+  "luxury": [
+    {
+      "id": "8effcdc9-ac32-4dc6-8ea3-5adc4faa0e8f",
+      "name": "“Luxury redefined: where fashion meets power.”",
+      "description": "“Own the room—one bag at a time.”\n\n",
+      "price": 800.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184360/lamariposa_products/x3upms5ulk1jyc5pmy8n.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184361/lamariposa_products/ksxn98itacozyom7v0m4.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184362/lamariposa_products/rghvueovu0xwycz6ugca.jpg"
+      ]
+    }
+  ],
   "soree": [
     {
       "id": "90b89032-c141-4fdf-bcb4-0a22351bf273",
