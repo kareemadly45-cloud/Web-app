@@ -63,6 +63,20 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188042/lamariposa_products/imlu9sysoziap2ib58gl.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188044/lamariposa_products/zxtcr2zdxadnavhpkkvy.jpg"
       ]
+    },
+    {
+      "id": "14d871d7-7aa2-4095-8cf6-663c904fe59e",
+      "name": "Luxury in your hands, elegance in your stride",
+      "description": "Luxury that moves with you",
+      "price": 750.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188216/lamariposa_products/zqx1jhfeuzwsbyiyaywa.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188217/lamariposa_products/f4lzmejuxiwf8zvr8iz6.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188218/lamariposa_products/wtm8bhiclaidznpjw6hl.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188218/lamariposa_products/fqojgc3kifdgiefwwqez.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188219/lamariposa_products/ce85trbfs01r80be4pol.jpg"
+      ]
     }
   ],
   "luxury": [
