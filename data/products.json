@@ -65,6 +65,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184646/lamariposa_products/d7uljfvjb3ckqoypipnz.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184647/lamariposa_products/vjs5gplfm3bbn9dtusom.jpg"
       ]
+    },
+    {
+      "id": "75584f00-ce50-46c9-83f2-c3de120e1523",
+      "name": "Soirée Bags: Where every night begins with style.",
+      "description": "“Elegance that lingers long after the soirée.”",
+      "price": 650.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185723/lamariposa_products/b52hfzgu0rpfokhvuce5.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185724/lamariposa_products/kpx9uf2drisl7npnlaxx.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185725/lamariposa_products/bc5clgfkzgjo6rwtjudf.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185726/lamariposa_products/plng1pomdpdah9ocbess.jpg"
+      ]
     }
   ],
   "discount": []
