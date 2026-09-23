@@ -1,5 +1,18 @@
 {
-  "home": [],
+  "home": [
+    {
+      "id": "f4720828-3ca9-4c38-b9b8-6266cfb4f0d5",
+      "name": "“Luxury designed for the spotlight.”",
+      "description": "“Luxury redefined: where fashion meets power.”",
+      "price": 700.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184855/lamariposa_products/hwbn3mymwnls0qxjfprq.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184856/lamariposa_products/npqqdtuape8egtmwylpm.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184857/lamariposa_products/osjyvpgjrdgssdrpsjqt.jpg"
+      ]
+    }
+  ],
   "luxury": [
     {
       "id": "8effcdc9-ac32-4dc6-8ea3-5adc4faa0e8f",
