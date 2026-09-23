@@ -172,6 +172,18 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186775/lamariposa_products/rwkkuqhzwtbazbpicyti.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186776/lamariposa_products/hwvmmjiweb8zvo62iaao.jpg"
       ]
+    },
+    {
+      "id": "e40b8e7e-d967-43c6-a53a-da6fb50a59a5",
+      "name": "Luxury that moves with you.",
+      "description": "Because true style is effortless.",
+      "price": 800.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187529/lamariposa_products/kdaptrzgiez8imsdtsy3.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187530/lamariposa_products/gdonxtiaqukvzf86vjtq.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187531/lamariposa_products/xvvqaexafmnqji9nas8u.jpg"
+      ]
     }
   ],
   "soree": [
