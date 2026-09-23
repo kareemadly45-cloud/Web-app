@@ -51,6 +51,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185473/lamariposa_products/jpkfafc1u19qsndhqpcx.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185474/lamariposa_products/xefuxs6pk0t0orul4xpq.jpg"
       ]
+    },
+    {
+      "id": "37daca7f-b510-4655-aa77-9f9b6f2b8646",
+      "name": "“Luxury, simplified.”",
+      "description": "“Because true style needs no logo.”",
+      "price": 850.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185815/lamariposa_products/wovfw8b4hxlmrhbj1wfz.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185816/lamariposa_products/s8rdxwefxxuslhky8mmv.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185817/lamariposa_products/ziijap8zdpzzatz3fdyw.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790185818/lamariposa_products/rnntt4rtbzptbvnxeegr.jpg"
+      ]
     }
   ],
   "soree": [
