@@ -11,6 +11,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184856/lamariposa_products/npqqdtuape8egtmwylpm.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184857/lamariposa_products/osjyvpgjrdgssdrpsjqt.jpg"
       ]
+    },
+    {
+      "id": "9f737d47-7ffb-4936-8144-051c642f43b9",
+      "name": "Back Bags: Where function meets fashion.",
+      "description": "“Carry comfort, carry confidence.”",
+      "price": 700.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186976/lamariposa_products/vdgiykbjo7yhpnojqkhs.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186976/lamariposa_products/xzkpay8vnx2c2i8pxs11.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186977/lamariposa_products/lkuofp84ku5pn1lrrjmg.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186978/lamariposa_products/qruncvomrkvjsaypacwl.jpg"
+      ]
     }
   ],
   "luxury": [
