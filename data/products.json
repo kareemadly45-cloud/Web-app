@@ -24,6 +24,21 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186977/lamariposa_products/lkuofp84ku5pn1lrrjmg.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186978/lamariposa_products/qruncvomrkvjsaypacwl.jpg"
       ]
+    },
+    {
+      "id": "cc77294e-4989-4ebf-a641-4fc875da33ea",
+      "name": "Style that travels with you.",
+      "description": "“Luxury in your hands, elegance in your stride.”\n\n",
+      "price": 700.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187219/lamariposa_products/beojy5dbnjhmvbbdnadu.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187220/lamariposa_products/u8fdxkmgip9fwcmncmec.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187220/lamariposa_products/wnybvy3qrqnbry1eyp1l.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187221/lamariposa_products/xkpj7dhqf4wuhkfmsqkp.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187222/lamariposa_products/sjl7uovcf8ttogwdocai.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790187223/lamariposa_products/imcwasufw1jhrklpovjn.jpg"
+      ]
     }
   ],
   "luxury": [
