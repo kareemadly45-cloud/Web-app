@@ -77,6 +77,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186049/lamariposa_products/b56lmv6b5eghxjeixqmz.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186050/lamariposa_products/t8s1rqg64b7op30oy5cz.jpg"
       ]
+    },
+    {
+      "id": "938853bd-947e-4d14-aa53-82c8244cef38",
+      "name": "“Luxury in your hands, elegance in your stride.”",
+      "description": "“Where artistry meets elegance.”",
+      "price": 600.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186230/lamariposa_products/dos04ybirsixbkhfugcp.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186231/lamariposa_products/rholxd9ox0tfhsmoltka.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186232/lamariposa_products/cqqg87irluwxu9dawdug.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186233/lamariposa_products/ymscyvoh2oqm1ngmghvr.jpg"
+      ]
     }
   ],
   "soree": [
