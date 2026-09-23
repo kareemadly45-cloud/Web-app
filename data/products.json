@@ -14,6 +14,19 @@
       ]
     }
   ],
-  "soree": [],
+  "soree": [
+    {
+      "id": "8525192b-5714-4231-bfd4-c500df1d4500",
+      "name": "“Soirée Bags: Where every night begins with style.",
+      "description": "\n“Carry the sparkle of the evening.”",
+      "price": 500.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184645/lamariposa_products/dgszzryn5dj9vtcnsmcx.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184646/lamariposa_products/d7uljfvjb3ckqoypipnz.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790184647/lamariposa_products/vjs5gplfm3bbn9dtusom.jpg"
+      ]
+    }
+  ],
   "discount": []
 }
