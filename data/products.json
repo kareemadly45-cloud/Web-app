@@ -1,16 +1,6 @@
 {
   "home": [
     {
-      "id": "6a60b00b-1400-4a17-97f9-85d73d8246d5",
-      "name": "Bag",
-      "description": "Bag",
-      "price": 3.0,
-      "price_after": 0,
-      "images": [
-        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790093473/lamariposa_products/iywmdoyncytwmdphgv4a.jpg"
-      ]
-    },
-    {
       "id": "e8a01c4f-2eab-45d4-9f20-d2ac192605d8",
       "name": "Ba",
       "description": "Bag",
