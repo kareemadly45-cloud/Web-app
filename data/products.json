@@ -90,6 +90,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186232/lamariposa_products/cqqg87irluwxu9dawdug.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186233/lamariposa_products/ymscyvoh2oqm1ngmghvr.jpg"
       ]
+    },
+    {
+      "id": "978c918f-fe3d-475a-88df-3e29247f0d2e",
+      "name": "Luxury in your hands, elegance in your stride.",
+      "description": "Crafted to be carried, destined to be admired.",
+      "price": 600.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186411/lamariposa_products/lko1mblew3gxhquqfkjd.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186412/lamariposa_products/mzgl8ammr7xa4nlk5zvx.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186413/lamariposa_products/axc3wilhvalru4r6ioyq.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790186414/lamariposa_products/z1tx6yprrq7jgf90ave4.jpg"
+      ]
     }
   ],
   "soree": [
