@@ -14,17 +14,6 @@
       ]
     }
   ],
-  "soree": [
-    {
-      "id": "5ae5bb98-4f3f-405c-9dc7-8e62cd22a899",
-      "name": "Luxury bag ",
-      "description": "Luxury bag ",
-      "price": 600.0,
-      "price_after": 0,
-      "images": [
-        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790102279/lamariposa_products/z1eo4fnwrkwy8ne1pkao.jpg"
-      ]
-    }
-  ],
+  "soree": [],
   "discount": []
 }
