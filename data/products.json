@@ -184,6 +184,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790271765/lamariposa_products/r6kwyhkaw3jqxxhvqbkp.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790271766/lamariposa_products/dlnwijzobhg8byevjd3p.jpg"
       ]
+    },
+    {
+      "id": "4389d7f5-5b3d-4a10-910e-be22b67548c9",
+      "name": "Luxury in your hands ✨️ ",
+      "description": "Luxury bags ",
+      "price": 750.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790272019/lamariposa_products/c2fr6cviq1nudfb7nfxb.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790272020/lamariposa_products/stuw2vneilpghs1qepac.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790272022/lamariposa_products/jsdkmkjpymjda3lm0jfp.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790272023/lamariposa_products/bdodtlocqz1tqkemlutr.jpg"
+      ]
     }
   ],
   "luxury": [
