@@ -342,6 +342,20 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268453/lamariposa_products/epxf9rsydotyde6sswkh.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268454/lamariposa_products/olpy9spyk66htrioalpl.jpg"
       ]
+    },
+    {
+      "id": "4c49ebe9-1e3c-44b2-b6e1-07c4cac05b95",
+      "name": "Soiree & trendy and chic ✨️ ",
+      "description": "Soiree bags",
+      "price": 500.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268591/lamariposa_products/cv0hbjtuj0mkabkb1eou.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268592/lamariposa_products/pfecqwn4flrn5giz58nt.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268592/lamariposa_products/omcq0zpxxy04hweepkq8.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268593/lamariposa_products/o19clbgvblwb0x2qjoeo.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268594/lamariposa_products/hvuxv2radhf5zccq6c2f.jpg"
+      ]
     }
   ],
   "discount": []
