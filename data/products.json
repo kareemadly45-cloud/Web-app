@@ -154,6 +154,23 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268242/lamariposa_products/c2bpr8jptuunwlsvfjwy.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268243/lamariposa_products/kjfuxseec2ljgeqftk4n.jpg"
       ]
+    },
+    {
+      "id": "1abc0206-038e-4dfc-b18a-4e4a064e2a68",
+      "name": "Luxury designed for the spotlight ✨️ ",
+      "description": "Luxury bags",
+      "price": 700.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268814/lamariposa_products/cebbr4siknfgs1xflhzj.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268815/lamariposa_products/gqa8u70eh15pzxdh3okf.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268816/lamariposa_products/guvyovfgetzxuiojkukv.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268817/lamariposa_products/uuws77gmcliazhr3kxhu.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268818/lamariposa_products/m2tnpfb9diqjjp3iudh0.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268819/lamariposa_products/lazhdveoorgemv2htlit.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268820/lamariposa_products/baed8kmpyxvhdfcbvdnd.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268821/lamariposa_products/um1pekzs8lboomjmxjq6.jpg"
+      ]
     }
   ],
   "luxury": [
