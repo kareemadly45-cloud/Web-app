@@ -139,6 +139,21 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267756/lamariposa_products/k42xy0tbxhjzbfkwc7qv.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267756/lamariposa_products/imdpj150u5k8rs3kwy9m.jpg"
       ]
+    },
+    {
+      "id": "5ddd092b-f9b7-4d0f-86cb-817fe441d89c",
+      "name": "Hold elegance, hold clutch 🩷",
+      "description": "Elevate your style ",
+      "price": 550.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268239/lamariposa_products/gv0wiufdizguko4gzwk6.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268239/lamariposa_products/xktdhz3oyynsl0utun56.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268240/lamariposa_products/hfsmdrfxxgjnx9fp9wgg.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268241/lamariposa_products/ljhkqjmvz9bd4skdfqlf.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268242/lamariposa_products/c2bpr8jptuunwlsvfjwy.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790268243/lamariposa_products/kjfuxseec2ljgeqftk4n.jpg"
+      ]
     }
   ],
   "luxury": [
