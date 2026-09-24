@@ -346,6 +346,25 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269178/lamariposa_products/cs5pujnsankixajweuq7.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269179/lamariposa_products/hlay8zoedmlw8uc5jlbo.jpg"
       ]
+    },
+    {
+      "id": "f582cc2f-5c53-4566-97d5-f51a494fbe22",
+      "name": "Luxury in your hands ✨️",
+      "description": "Luxury bags ",
+      "price": 800.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269327/lamariposa_products/oownkre4i3d0qsuthmnv.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269328/lamariposa_products/cn327mxhbgrd0wg94vyq.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269329/lamariposa_products/yedjlqgif62hb5hxb9hn.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269331/lamariposa_products/ogddoi3iir3cusy4u94n.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269332/lamariposa_products/mvcs9ib3wizslaprlccv.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269333/lamariposa_products/yze37xwh6adp8skyhvrn.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269333/lamariposa_products/e9zgqswt4jjif11ti8sa.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269334/lamariposa_products/rmaibf0act3kgmkgjmm9.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269335/lamariposa_products/slpnxkjjmn0vdqs5t2sh.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269336/lamariposa_products/levdxsipi7oagdhmhpuw.jpg"
+      ]
     }
   ],
   "soree": [
