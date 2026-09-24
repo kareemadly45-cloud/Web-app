@@ -111,6 +111,21 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267327/lamariposa_products/fhbooeewn3hf96ydahzz.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267328/lamariposa_products/vaq7m9ek7zbmlah1r3g6.jpg"
       ]
+    },
+    {
+      "id": "33a2d755-2ed7-4b6a-8553-8bf5a6bcb0b9",
+      "name": "Elevate your style 🩷👛",
+      "description": "Elevate your style & Elevate your status ",
+      "price": 550.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267515/lamariposa_products/yntxfrf0om4djn50ojse.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267516/lamariposa_products/wfvtvxkikf2wovo6edb0.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267517/lamariposa_products/yvpj9nldqu7ywgcfi0qc.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267518/lamariposa_products/ajrt9bc9uberajuljol2.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267519/lamariposa_products/qedduy14itiga28nekjl.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267520/lamariposa_products/jbwxhadhdav0ibodtddw.jpg"
+      ]
     }
   ],
   "luxury": [
