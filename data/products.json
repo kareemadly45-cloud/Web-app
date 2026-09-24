@@ -77,6 +77,22 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188218/lamariposa_products/fqojgc3kifdgiefwwqez.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790188219/lamariposa_products/ce85trbfs01r80be4pol.jpg"
       ]
+    },
+    {
+      "id": "86bd611d-5630-49ee-b957-1eb3a26c91d7",
+      "name": "Trend on your hands 👛🩷",
+      "description": "Luxury & trendy bag",
+      "price": 650.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267141/lamariposa_products/wbdwonjfat8hv25kstmp.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267142/lamariposa_products/dc92elh3yodhdewiwryx.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267143/lamariposa_products/urehyhoj7odwutqj50rx.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267144/lamariposa_products/hfqvpsn2lflfy0xundow.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267145/lamariposa_products/tmzq5qn1f3ipqoqmoxtq.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267146/lamariposa_products/xa8go6zt75xpjtdgzuxj.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267147/lamariposa_products/b9olxwkxtc4rmb5q7wiq.jpg"
+      ]
     }
   ],
   "luxury": [
