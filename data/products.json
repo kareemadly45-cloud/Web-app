@@ -423,5 +423,21 @@
       ]
     }
   ],
-  "discount": []
+  "discount": [
+    {
+      "id": "a8a48a31-4591-484f-be83-1be058ee5b94",
+      "name": "Trendy in your hands ✨️",
+      "description": "Luxury bags ",
+      "price": 550.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269488/lamariposa_products/zxitgu7gdiohnbire4nx.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269489/lamariposa_products/hirn8dyn25ir1zctdaef.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269490/lamariposa_products/hzxjddonmnjgxkf2ivlk.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269491/lamariposa_products/aogm2mxculfyrsbfhpze.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269492/lamariposa_products/mkpqidiexjrao81bdjyy.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269493/lamariposa_products/zacd9shqlq2nizmmyapg.jpg"
+      ]
+    }
+  ]
 }
