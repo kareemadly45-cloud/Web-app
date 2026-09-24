@@ -126,6 +126,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267519/lamariposa_products/qedduy14itiga28nekjl.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267520/lamariposa_products/jbwxhadhdav0ibodtddw.jpg"
       ]
+    },
+    {
+      "id": "b2150949-c3ed-4841-a7ca-184e0a5efdb9",
+      "name": "Practical & chic 👛🩷",
+      "description": "Elevate your style 🩷",
+      "price": 500.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267754/lamariposa_products/lin3x1c3ad5gsbeyqfnq.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267755/lamariposa_products/rn0pjthokfefu1rcupm2.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267756/lamariposa_products/k42xy0tbxhjzbfkwc7qv.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790267756/lamariposa_products/imdpj150u5k8rs3kwy9m.jpg"
+      ]
     }
   ],
   "luxury": [
