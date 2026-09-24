@@ -332,6 +332,20 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269009/lamariposa_products/gsvn9fyls5sojhwql9by.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269010/lamariposa_products/yajlfjz1h2rpuoakaa0e.jpg"
       ]
+    },
+    {
+      "id": "368a7c68-9b42-434a-8915-5801b9e0882e",
+      "name": "Luxury that moves with you 👛",
+      "description": "Luxury bags 🎒 ",
+      "price": 800.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269176/lamariposa_products/szjoqy29wmmtmbp6lmdd.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269177/lamariposa_products/xd2gkh8cop6gljkhlioa.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269178/lamariposa_products/lqkzwk2pfuojcvxdfr7o.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269178/lamariposa_products/cs5pujnsankixajweuq7.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790269179/lamariposa_products/hlay8zoedmlw8uc5jlbo.jpg"
+      ]
     }
   ],
   "soree": [
