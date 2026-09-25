@@ -586,6 +586,22 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335365/lamariposa_products/ppwboix144lmehf2wqeo.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335366/lamariposa_products/qphgtdheaurwth8gae1x.jpg"
       ]
+    },
+    {
+      "id": "f617d5db-a13c-4a07-82bd-08d329589690",
+      "name": "Luxury bag ✨️",
+      "description": "Luxury & trendy",
+      "price": 750.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335820/lamariposa_products/fxfolv9gxqd0ugiufs5b.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335820/lamariposa_products/f1tkdkki9hq245ggw5on.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335821/lamariposa_products/zzf8zaqr5szkhtl9zb4t.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335822/lamariposa_products/x9zvekbduy5z76wsl6wm.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335823/lamariposa_products/ryd225zcdtbnpdrpezqn.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335824/lamariposa_products/aycgdsr5nbvidn2g5qrf.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335825/lamariposa_products/bti7wpqzdexby2wzzifo.jpg"
+      ]
     }
   ],
   "discount": [
