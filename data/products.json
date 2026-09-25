@@ -569,6 +569,23 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790270622/lamariposa_products/qqq6wxgvopuay26hqjlf.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790270623/lamariposa_products/xbmlvtzpry3hinxvc41w.jpg"
       ]
+    },
+    {
+      "id": "76e4f618-4642-4a21-bf7f-340891d2fc74",
+      "name": "Luxury on your hands ✨️💕",
+      "description": "Luxury bags",
+      "price": 750.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335360/lamariposa_products/ecqf8kymqxhnvufoy67v.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335361/lamariposa_products/rcdrjcpa7jchp57kskm3.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335362/lamariposa_products/uyz7tt0x8zxoryfczdkb.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335363/lamariposa_products/xapispegkquyqumq7fz6.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335363/lamariposa_products/kztmdr2ngfq94nacw3yf.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335364/lamariposa_products/i6noxpsfx5u6tmspwhy2.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335365/lamariposa_products/ppwboix144lmehf2wqeo.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790335366/lamariposa_products/qphgtdheaurwth8gae1x.jpg"
+      ]
     }
   ],
   "discount": [
