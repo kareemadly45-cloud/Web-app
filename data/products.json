@@ -269,6 +269,19 @@
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790454252/lamariposa_products/mjekvpkv88tv1bhdxhy8.jpg",
         "https://res.cloudinary.com/so2gwoyk/image/upload/v1790454256/lamariposa_products/czbwicxih9ekfezpk3bo.jpg"
       ]
+    },
+    {
+      "id": "c30bc140-62f1-4f54-9169-f5d91a5b9609",
+      "name": "Couture Confidence ✨️",
+      "description": "Luxury bags ",
+      "price": 600.0,
+      "price_after": 0,
+      "images": [
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790454654/lamariposa_products/us4fjhyrjh53pkfugkww.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790454655/lamariposa_products/pm5vk9mg4vc7yjji3sl7.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790454656/lamariposa_products/soqqhm7jrboyjgyb12xh.jpg",
+        "https://res.cloudinary.com/so2gwoyk/image/upload/v1790454656/lamariposa_products/oyr2xo8fi0okzptregcr.jpg"
+      ]
     }
   ],
   "luxury": [
